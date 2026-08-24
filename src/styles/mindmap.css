@@ -1,0 +1,89 @@
+/**
+ * @file mindmap.css
+ * @description Estilos visuales para el Mapa Mental Dinámico e Interactivo (SVG / React).
+ */
+
+.mindmap-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 650px;
+  background: radial-gradient(circle at center, #0f172a 0%, #070a12 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+.mindmap-controls-bar {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.mindmap-canvas-container {
+  width: 100%;
+  height: 650px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Nodos SVG del Mapa Mental */
+.mindmap-node {
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.mindmap-node circle, .mindmap-node rect {
+  transition: all var(--transition-bounce);
+}
+
+.mindmap-node:hover circle, .mindmap-node:hover rect {
+  filter: drop-shadow(0 0 12px var(--node-color, var(--accent-cyan)));
+  transform: scale(1.08);
+}
+
+.mindmap-connection {
+  stroke-dasharray: 6;
+  animation: dashAnimation 20s linear infinite;
+  transition: stroke 0.3s ease;
+}
+
+@keyframes dashAnimation {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.mindmap-tooltip {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--accent-cyan);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  max-width: 550px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
