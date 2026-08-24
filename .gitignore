@@ -1,17 +1,34 @@
 # Dependencies
 node_modules/
 
-# Production build outputs
+# Production & Build outputs
 dist/
 dist-ssr/
+build/
 
-# Local env files
+# Local Environment Variables & Secrets
 *.local
 .env
 .env.*
 
-# Editor directories and OS files
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & OS System Files
 .vscode/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .DS_Store
 Thumbs.db
+
+# Heavy Material & Private / Unused Files
+Contenido TEORICO y PRACTICO/
+1_smQM2a9JLJ52yuPhkRAk7Q.jpg
