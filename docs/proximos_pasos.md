@@ -9,8 +9,6 @@
 
 ## 🔮 Tareas Pendientes (Para Realizar Después)
 
-**Cambiar el nombre de la plataforma**: "SQL Master" por "SQL Playground".
-
 0. **Corregir errores de SQLlite, por que no funciona las consultas**:
 
 - no inicia, pone que no esta listo.

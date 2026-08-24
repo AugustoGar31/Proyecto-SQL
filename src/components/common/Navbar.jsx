@@ -16,8 +16,8 @@ export function Navbar() {
       <div className="navbar-inner">
         {/* Brand & Logo */}
         <div className="brand-logo">
-          <div className="logo-icon">
-            <Database size={22} />
+          <div className="logo-icon" style={{ padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src="/favicon.png" alt="NexoSQL Logo" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
           </div>
           <div>
             <span style={{ color: '#ffffff' }}>Nexo</span>
