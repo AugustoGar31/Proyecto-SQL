@@ -20,10 +20,10 @@ export function Navbar() {
             <Database size={22} />
           </div>
           <div>
-            <span style={{ color: '#ffffff' }}>SQL</span>
-            <span style={{ color: 'var(--accent-cyan)' }}> MASTER</span>
+            <span style={{ color: '#ffffff' }}>Nexo</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>SQL</span>
             <span style={{ fontSize: '0.65rem', display: 'block', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '1px' }}>
-              ENGINEERING EDITION
+              QueryMaster Academy
             </span>
           </div>
         </div>
