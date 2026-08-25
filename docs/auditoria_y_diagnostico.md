@@ -121,3 +121,27 @@ Pagina SQL/
 │   ├── App.jsx                           # Router de Vistas / Layout Principal limpio
 │   └── main.jsx                          # Entrada React
 ```
+
+---
+
+## 4. Registro de Avances - 24 de Agosto, 2026
+
+### 🚀 A. Configuración de Repositorio Git & GitHub
+* **Vinculación Remota:** Se configuró el repositorio remoto `https://github.com/AugustoGar31/Proyecto-SQL.git` asignando la rama principal a `main`.
+* **Protección y Limpieza (`.gitignore`):** Se creó el archivo `.gitignore` centralizado para ignorar `node_modules/`, compilaciones `dist/`, variables de entorno y logs.
+* **Ocultación de Material Teórico:** Se desvinculó de Git la carpeta local `Contenido TEORICO y PRACTICO/` (preservando los archivos intactos en el disco local del usuario) para evitar saturar el repositorio.
+
+### 🎨 B. Rebranding Completo de la Plataforma
+* **Nombre Oficial:** Cambio del nombre de la plataforma a **NexoSQL**.
+* **Identidad Institucional:** Inclusión del subtítulo **QueryMaster Academy** en el encabezado ([`Navbar.jsx`](file:///c:/Users/Usuario/Documents/Pagina%20SQL/src/components/common/Navbar.jsx)) en reemplazo de `ENGINEERING EDITION`.
+* **Metadatos HTML:** Actualización del título global `<title>NexoSQL - QueryMaster Academy</title>` en `index.html`.
+
+### 🖼️ C. Procesamiento de Logo e Integración de Favicon
+* **Tratamiento de Imagen:** Extracción del logo pentagonal neon a partir del arte original, eliminando el fondo oscuro para lograr transparencia alfa perfecta.
+* **Formatos de Producción:** Generación automatizada de artefactos gráficos en PNG transparente (512x512) e ICO de alta fidelidad (`favicon.png`, `favicon.ico`, `src/assets/logo.png`).
+* **Integración Visual:** Configuración de Favicon en `index.html` e implementación del nuevo logo en la barra de navegación principal.
+
+### 🛠️ D. Verificación y Sincronización
+* **Build de Producción:** Validación exitosa de compilación con Vite (`npm run build` - 1621 módulos transformados sin errores).
+* **Sincronización:** Registro de commits y push completado a la rama `main` en GitHub.
+
