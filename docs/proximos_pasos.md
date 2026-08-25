@@ -4,20 +4,16 @@
 
 ## 🔮 Tareas Pendientes (Para Realizar Después)
 
-0. **Corregir errores de SQLlite, por que no funciona las consultas**:
-
-- no inicia, pone que no esta listo.
-- no acepta las consultas de prueba que deberian funcionar. hay que
-  desarrollar un mejor sistema de validacion de errores.
-- la sintaxis que usan parece ser correcta, pero hay que verificar que sea la correcta.
-- revisar todos los ejercicios y verificar que las consultas de prueba sean las correctas.
-- tener un modelo de la respuesta y ver si responde lo mismo, no darle interes al consumo
-  de recursos de sql.js.
-- por sobre todas las cosas, hay que probar con todas las consultas que hay y ver si funciona.
-- mostrar un mejor feedback de los errores, por que la mayoria de veces no muestra nada.
-
 1. **Mejorar el Mapa Mental**:
    - Continuar enriqueciendo la interactividad visual, animaciones y detalles del árbol SVG de nodos.
+
+1.1 **Hacer un playground**:
+
+- crear un apartado para hacer consultas a la base de datos que se usa en la plataforma.
+- que permita hacer consultas cualesquiera el usuario, para practicar libremente.
+- debe tener un formato similar al editor de consultas.
+- no debe tener limite de filas, para que se pueda ver todas las filas de la tabla.
+- debe tener un estilo agradable y ser intuitivo de usar.
 
 2. **Hacer una Intro para la Plataforma**:
    - Crear una pantalla de bienvenida / Onboarding inicial para guiar al estudiante y evitar que entre a ver un ejercicio de la nada sin contexto previo.
@@ -29,18 +25,27 @@
 3.2. **A cada módulo se le asigna un puntaje y un badge, para aprobar el módulo se debe tener un puntaje mínimo de 80 puntos**.
 3.3. **Por lo tanto, cada módulo tiene 8 lecciones y cada lección tiene 10 puntos, por lo tanto, para aprobar el módulo se deben completar las 8 lecciones**.
 
-4. **Crear el Backend/Persistencia de Datos**:
-   - actualmente los datos se guardan en localStorage, pero para mayor seguridad y escalabilidad sería ideal crear un backend.
+4. **Crear chat bot con IA**:
+   - La idea es generar una IA que sea capaz de responder dudas y ayudar con las consultas y ejercicios.
+   - Actualmente la plataforma no tiene un chat bot con IA, sería ideal agregar uno para que los estudiantes puedan hacer preguntas y obtener respuestas de forma interactiva.
 
-5. **Implementar Tests**:
-   - Actualmente la plataforma no tiene tests, sería ideal agregar tests para asegurar el correcto funcionamiento de la plataforma.
+5. **crear libretos de contenido con los tipos de consulta a aprender**:
+   - crear libretos que dentro de ellos tengas las lecciones organizadas de forma logica.
+   - Cada libreto representaria una categoria de consultas.
+   - y por lo tanto en el sidebar aparecerian las consultas que tiene cada categoria.
+   - y al darle click en una categoria, se desplegaria un menu con las lecciones que tiene cada categoria.
+   - al darle click en una leccion, se abriria la leccion en el sidebar.
+   - al finalizar todas las lecciones de un libreto, se desbloquearia la siguiente categoria.
 
-6. **Agregar más contenido educativo**:
+6. **Agregar las lecciones en los libretos**:
    - Actualmente la plataforma tiene 4 lecciones, sería ideal agregar más contenido educativo para enriquecer la experiencia del estudiante.
+   - Por lo tanto, por cada categoria de consultas se debe crear un libreto, que tenga las lecciones correspondientes a esa categoria.
+   - actualmente las lecciones estan distribuidas en diferentes archivos, los cuales no estan organizados en libretos, por lo tanto, se debe organizar las lecciones en libretos.
+   - Cuando ya esten creados los libretos, ahi agregamos mas actividades para hacer.
 
 7. **Agregar barra de progreso de las lecciones**:
    - Actualmente la plataforma no tiene barra de progreso de las lecciones, sería ideal agregar una barra de progreso para indicar el avance del estudiante.
-   - Actualmente la barra de progreso solo muestra el progreso general de las lecciones, sería ideal que mostrara el progreso de cada lección.
+   - Actualmente la barra de progreso solo muestra el progreso general de las lecciones, sería ideal que mostrara el progreso de cada lección y por lo tanto que esta se actualice con cada leccion completada, por lo tanto se debe trabajar en la logica de la barra de progreso.
 
 8. **Agregar pruebas de concepto**:
    - Agregar pruebas de concepto para asegurar el correcto funcionamiento de la plataforma.
@@ -56,3 +61,7 @@
 11. **Habilitar botones ocultos**:
 
 - Actualmente la plataforma tiene botones ocultos, sería ideal habilitarlos para que el estudiante pueda acceder a ellos.
+
+12. **Poner mas datos en la BD**:
+
+- Actualmente la plataforma tiene datos basicos en la bd, sería ideal agregar mas datos para enriquecer la experiencia del estudiante.

@@ -16,7 +16,7 @@ import { Terminal, Cpu, Database, ChevronRight } from 'lucide-react';
 
 export function WorkspaceView() {
   const { currentLesson } = useProgress();
-  const { isReady, initError, runQuery } = useDbEngine();
+  const { isReady, initError, runQuery, retryInitialization } = useDbEngine();
 
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'internals'
   const [editorSql, setEditorSql] = useState('');
@@ -42,7 +42,14 @@ export function WorkspaceView() {
     return (
       <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--accent-rose)' }}>
         <h2>⚠️ Error al iniciar el motor SQL WebAssembly</h2>
-        <p>{initError}</p>
+        <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 1.5rem 0' }}>{initError}</p>
+        <button
+          onClick={retryInitialization}
+          className="btn-glass"
+          style={{ background: 'var(--accent-cyan)', color: '#000', fontWeight: 600, padding: '0.66rem 1.25rem' }}
+        >
+          🔄 Reintentar Inicialización de Base de Datos
+        </button>
       </div>
     );
   }

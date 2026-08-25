@@ -15,30 +15,44 @@ export const DbEngineProvider = ({ children }) => {
   const [initError, setInitError] = useState(null);
   const [currentSchemaId, setCurrentSchemaId] = useState(null);
 
-  // Inicialización del motor al arrancar la app
+  // Inicialización del motor y seeding de datos al arrancar la app
   useEffect(() => {
     let isMounted = true;
 
-    async function setup() {
+    async function initializeAndSeed() {
       try {
+        setIsReady(false);
+        setInitError(null);
+
+        // 1. Inicialización asíncrona de WASM sql.js
         await sqlEngine.initEngine();
+
+        // 2. Determinar esquema objetivo (lección activa o fallback 'universidad')
+        const targetSchema = (currentLesson && currentLesson.schemaId) ? currentLesson.schemaId : 'universidad';
+
+        // 3. Ejecutar Seeding de datos inmediato (CREATE TABLE + INSERTs)
+        sqlEngine.seedDatabase(targetSchema);
+
         if (isMounted) {
+          setCurrentSchemaId(targetSchema);
           setIsReady(true);
         }
       } catch (err) {
+        console.error('Error durante la inicialización y seeding del motor SQL:', err);
         if (isMounted) {
-          setInitError(err.message || 'Error al iniciar WebAssembly SQL.');
+          setInitError(err.message || 'Error al iniciar la base de datos WebAssembly.');
+          setIsReady(false);
         }
       }
     }
 
-    setup();
+    initializeAndSeed();
     return () => { isMounted = false; };
   }, []);
 
-  // Carga del esquema relacional según la lección activa
+  // Cambio dinámico de esquema relacional cuando cambia la lección activa
   useEffect(() => {
-    if (isReady && currentLesson && currentLesson.schemaId) {
+    if (isReady && currentLesson && currentLesson.schemaId && currentLesson.schemaId !== currentSchemaId) {
       try {
         sqlEngine.loadSchema(currentLesson.schemaId);
         setCurrentSchemaId(currentLesson.schemaId);
@@ -46,7 +60,26 @@ export const DbEngineProvider = ({ children }) => {
         console.error('Error al cambiar esquema de BD:', error);
       }
     }
-  }, [isReady, currentLesson]);
+  }, [isReady, currentLesson, currentSchemaId]);
+
+  /**
+   * Reintenta la inicialización completa del motor SQL y el seeding de datos.
+   */
+  const retryInitialization = async () => {
+    setIsReady(false);
+    setInitError(null);
+    try {
+      await sqlEngine.initEngine();
+      const targetSchema = (currentLesson && currentLesson.schemaId) ? currentLesson.schemaId : 'universidad';
+      sqlEngine.seedDatabase(targetSchema);
+      setCurrentSchemaId(targetSchema);
+      setIsReady(true);
+    } catch (err) {
+      console.error('Error al reintentar inicialización:', err);
+      setInitError(err.message || 'Error al iniciar la base de datos WebAssembly.');
+      setIsReady(false);
+    }
+  };
 
   /**
    * Ejecuta una consulta SQL en la base de datos actual.
@@ -72,7 +105,8 @@ export const DbEngineProvider = ({ children }) => {
         initError,
         currentSchemaId,
         runQuery,
-        resetCurrentSchema
+        resetCurrentSchema,
+        retryInitialization
       }}
     >
       {children}

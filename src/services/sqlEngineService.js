@@ -5,6 +5,7 @@
  */
 
 import initSqlJs from 'sql.js';
+import sqlWasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 import { SAMPLE_SCHEMAS } from '../data/schemas/index.js';
 
 export class SqlEngineService {
@@ -12,33 +13,71 @@ export class SqlEngineService {
     this.SQL = null;
     this.db = null;
     this.currentSchemaId = null;
-    this.isInitializing = false;
+    this.initPromise = null;
   }
 
   /**
    * Inicializa la instancia WebAssembly de sql.js localmente.
+   * Garantiza la ejecución asíncrona única mediante initPromise.
    * @returns {Promise<boolean>} Devuelve true si la carga del binario WASM fue exitosa.
    */
   async initEngine() {
-    if (this.SQL) return true;
-    if (this.isInitializing) return false;
+    if (this.SQL && this.db) return true;
+    if (this.initPromise) return this.initPromise;
 
-    this.isInitializing = true;
-    try {
-      const initFn = typeof initSqlJs === 'function' ? initSqlJs : (initSqlJs && initSqlJs.default) || window.initSqlJs;
-      if (typeof initFn !== 'function') {
-        throw new Error('No se encontró la función de inicialización de sql.js WASM.');
+    this.initPromise = (async () => {
+      try {
+        const initFn = typeof initSqlJs === 'function' ? initSqlJs : (initSqlJs && initSqlJs.default) || window.initSqlJs;
+        if (typeof initFn !== 'function') {
+          throw new Error('No se encontró la función de inicialización de sql.js WASM.');
+        }
+
+        const resolvedWasmUrl = sqlWasmUrl || '/sql-wasm.wasm';
+
+        this.SQL = await initFn({
+          locateFile: (file) => (file.endsWith('.wasm') ? resolvedWasmUrl : `/${file}`)
+        });
+
+        if (!this.db) {
+          this.db = new this.SQL.Database();
+        }
+        return true;
+      } catch (error) {
+        console.error('Error al cargar SQLite WebAssembly:', error);
+        this.initPromise = null;
+        throw new Error(`No se pudo inicializar el motor SQLite WASM: ${error.message || error}`);
       }
-      this.SQL = await initFn({
-        locateFile: (file) => `/${file}`
-      });
-      this.db = new this.SQL.Database();
-      this.isInitializing = false;
+    })();
+
+    return this.initPromise;
+  }
+
+  /**
+   * Ejecuta la población de datos (Seeding) ejecutando el DDL (CREATE TABLE) y DML (INSERT).
+   * Usa db.exec() para procesar múltiples sentencias SQL en un solo script.
+   * @param {string} [schemaId='universidad'] - Identificador único del esquema.
+   * @returns {boolean} True si la población fue exitosa.
+   */
+  seedDatabase(schemaId = 'universidad') {
+    if (!this.db) {
+      throw new Error('El motor SQL no está inicializado.');
+    }
+
+    const schema = SAMPLE_SCHEMAS[schemaId] || SAMPLE_SCHEMAS['universidad'];
+    if (!schema) {
+      throw new Error(`Esquema '${schemaId}' no encontrado.`);
+    }
+
+    try {
+      // Importante: db.exec ejecuta todo el script (múltiples sentencias separadas por punto y coma),
+      // a diferencia de db.run que solo ejecuta la primera sentencia del string.
+      this.db.exec(schema.sqlSetup);
+      this.currentSchemaId = schema.id;
+      console.log(`[SQL Engine] Base de datos poblada exitosamente (Seeded) con el esquema: '${schema.id}'`);
       return true;
     } catch (error) {
-      console.error('Error al cargar SQLite WebAssembly:', error);
-      this.isInitializing = false;
-      throw new Error('No se pudo inicializar el motor SQLite WASM en el navegador.');
+      console.error(`[SQL Engine] Error al poblar (seed) el esquema '${schemaId}':`, error);
+      throw new Error(`Error en Seeding para esquema '${schemaId}': ${error.message}`);
     }
   }
 
@@ -59,11 +98,9 @@ export class SqlEngineService {
     try {
       this.db.close();
       this.db = new this.SQL.Database();
-      this.db.run(schema.sqlSetup);
-      this.currentSchemaId = schemaId;
-      return true;
+      return this.seedDatabase(schemaId);
     } catch (error) {
-      console.error(`Error al cargar el esquema ${schemaId}:`, error);
+      console.error(`Error al cambiar esquema de BD:`, error);
       throw error;
     }
   }
@@ -127,15 +164,52 @@ export class SqlEngineService {
 
     } catch (error) {
       const endTime = performance.now();
+      const rawErrorMsg = error ? (error.message || String(error)) : 'Error de sintaxis o ejecución SQL.';
+      const formattedError = this._formatSqlError(rawErrorMsg);
+
       return {
         success: false,
         columns: [],
         values: [],
         rowsAffected: 0,
         executionTimeMs: parseFloat((endTime - startTime).toFixed(2)),
-        error: error.message || 'Error de sintaxis o ejecución SQL.'
+        error: rawErrorMsg,
+        errorDetails: formattedError
       };
     }
+  }
+
+  /**
+   * Analiza el mensaje de error de SQLite y genera retroalimentación amigable para estudiantes.
+   * @private
+   */
+  _formatSqlError(msg) {
+    const rawMsg = msg || 'Error de sintaxis o ejecución SQL desconocido.';
+    let category = 'Error de Ejecución SQL';
+    let suggestion = 'Verifica la estructura sintáctica de tu consulta SQL.';
+
+    if (/no such table/i.test(rawMsg)) {
+      category = 'Tabla No Encontrada';
+      suggestion = 'La tabla consultada no existe en la base de datos activa. Revisa el diagrama ERD o el nombre exacto de la tabla.';
+    } else if (/no such column/i.test(rawMsg)) {
+      category = 'Columna No Encontrada';
+      suggestion = 'Revisa que la columna pertenezca a la tabla especificada y no tenga errores tipográficos.';
+    } else if (/syntax error/i.test(rawMsg)) {
+      category = 'Error de Sintaxis SQL';
+      suggestion = 'Comprueba si faltan comas entre columnas, si hay comillas no cerradas o si escribiste mal las palabras clave (SELECT, FROM, WHERE).';
+    } else if (/ambiguous column name/i.test(rawMsg)) {
+      category = 'Columna Ambigua';
+      suggestion = 'La columna existe en múltiples tablas unidas mediante JOIN. Antepón el nombre de la tabla (ej. estudiantes.nombre).';
+    } else if (/constraint failed/i.test(rawMsg)) {
+      category = 'Violación de Restricción';
+      suggestion = 'La operación infringe una regla de integridad (NOT NULL, UNIQUE, CHECK o FOREIGN KEY).';
+    }
+
+    return {
+      rawMessage: rawMsg,
+      category,
+      suggestion
+    };
   }
 
   /**
