@@ -9,4 +9,5 @@
 - **Privacidad**: Carpeta `Contenido TEORICO y PRACTICO/` desvinculada de Git (se mantiene localmente).
 - **Rebranding**: Cambio de nombre a **NexoSQL** y subtítulo a **QueryMaster Academy** en Navbar y HTML.
 - **Favicon & Logo**: Logo procesado sin fondo oscuro (PNG transparente e ICO en `public/` y `src/assets/logo.png`).
+- **Diseño Navbar**: Eliminado recuadro azul de fondo detrás del logo superior; aplicado resplandor neón cyan flotante.
 - **Build**: Compilación verificada con `npm run build` e instalada sin errores.
