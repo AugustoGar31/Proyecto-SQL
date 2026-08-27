@@ -1,232 +1,241 @@
 /**
  * @file MindMapView.jsx
- * @description Componente de espacio completo para el Mapa Mental Dinámico e Interactivo del Lenguaje SQL.
- * Reemplaza totalmente la imagen estática anterior por un renderizador visual basado en SVG/React.
+ * @description Componente de navegación interactiva y Taxonomía Drill-down del Lenguaje SQL.
+ * Implementa una arquitectura visual limpia con transiciones suaves (Framer Motion) y vistas detalladas por categoría.
  */
 
 import React, { useState } from 'react';
-import { MINDMAP_TREE } from './mindMapData.js';
-import { Network, BookOpen, ArrowRight } from 'lucide-react';
-import { useProgress } from '../../context/ProgressContext.jsx';
-import { useView } from '../../context/ViewContext.jsx';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MINDMAP_CATEGORIES } from './mindMapData.js';
+import { CategoryDetailView } from './CategoryDetailView.jsx';
+import { Network, Sparkles, Layers, ArrowRight } from 'lucide-react';
 
 export function MindMapView() {
-  const { selectLesson } = useProgress();
-  const { setActiveView } = useView();
-  const [selectedNode, setSelectedNode] = useState(MINDMAP_TREE);
-  const [filterCategory, setFilterCategory] = useState('ALL');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
-  /**
-   * Maneja el clic en un nodo del mapa mental.
-   * @param {Object} node - Objeto de nodo seleccionado.
-   */
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-  };
+  const activeCategory = MINDMAP_CATEGORIES.find(c => c.id === selectedCategoryId);
 
-  /**
-   * Redirige al taller o teoría de la lección vinculada al nodo.
-   * @param {string} lessonId - ID de lección.
-   */
-  const handleGoToLesson = (lessonId) => {
-    if (lessonId) {
-      selectLesson(lessonId);
-      setActiveView('playground');
+  // Variantes de animación para el mapa base
+  const baseMapVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }
+    },
+    exit: {
+      opacity: 0,
+      scale: 1.05,
+      transition: { duration: 0.3, ease: 'easeInOut' }
     }
   };
 
-  // Filtrado de ramas por categoría
-  const categories = ['ALL', 'DQL', 'DML', 'DDL', 'TCL', 'PROCEDURAL'];
+  // Coordenadas fijas simétricas y equilibradas para las 5 categorías (Canvas 1000 x 600)
+  const categoryPositions = [
+    { id: 'dql', x: 500, y: 95 },         // Superior Centro
+    { id: 'dml', x: 740, y: 220 },        // Superior Derecha
+    { id: 'ddl', x: 670, y: 475 },        // Inferior Derecha
+    { id: 'tcl', x: 330, y: 475 },        // Inferior Izquierda
+    { id: 'procedural', x: 260, y: 220 }  // Superior Izquierda
+  ];
 
   return (
     <div className="space-container">
-      {/* Encabezado del Espacio Mapa Mental */}
+      {/* Encabezado del Espacio */}
       <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--accent-cyan)' }}>
             <Network size={28} />
-            <h1 style={{ fontSize: '1.75rem', color: '#ffffff', margin: 0 }}>
+            <h1 style={{ fontSize: '1.75rem', color: '#ffffff', margin: 0, fontWeight: 700 }}>
               Mapa Mental Interactivo de SQL
             </h1>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginTop: '0.25rem' }}>
-            Explora de forma visual la taxonomía del lenguaje (DQL, DML, DDL, TCL, Procedural) y navega a la práctica.
+            Explora la taxonomía completa del lenguaje. Haz clic en cualquier categoría para profundizar en sus comandos.
           </p>
         </div>
 
-        {/* Filtro por Categorías */}
-        <div className="space-tabs">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilterCategory(cat)}
-              className={`tab-btn ${filterCategory === cat ? 'active' : ''}`}
-            >
-              {cat === 'ALL' ? 'Todos los Ramos' : cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Contenedor Principal del Mapa Mental SVG */}
-      <div className="mindmap-wrapper">
-        <div className="mindmap-canvas-container">
-          <svg width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="6" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
-
-            {/* Conectores SVG Curvos */}
-            {MINDMAP_TREE.children.map((catNode, idx) => {
-              if (filterCategory !== 'ALL' && catNode.category !== filterCategory) return null;
-              
-              const angle = (idx / MINDMAP_TREE.children.length) * 2 * Math.PI - Math.PI / 2;
-              const catX = 500 + Math.cos(angle) * 190;
-              const catY = 300 + Math.sin(angle) * 170;
-
-              return (
-                <g key={catNode.id}>
-                  {/* Línea Central al Nodo Categoría */}
-                  <path
-                    d={`M 500 300 Q ${(500 + catX) / 2} ${(300 + catY) / 2 - 20} ${catX} ${catY}`}
-                    fill="none"
-                    stroke={catNode.color}
-                    strokeWidth="2.5"
-                    opacity="0.6"
-                    className="mindmap-connection"
-                  />
-
-                  {/* Nodos Hijos del Comando */}
-                  {catNode.children && catNode.children.map((childNode, cIdx) => {
-                    const childAngle = angle + (cIdx - (catNode.children.length - 1) / 2) * 0.35;
-                    const childX = catX + Math.cos(childAngle) * 130;
-                    const childY = catY + Math.sin(childAngle) * 110;
-
-                    return (
-                      <g key={childNode.id} className="mindmap-node" onClick={() => handleNodeClick(childNode)}>
-                        <line
-                          x1={catX}
-                          y1={catY}
-                          x2={childX}
-                          y2={childY}
-                          stroke={childNode.color}
-                          strokeWidth="1.5"
-                          opacity="0.4"
-                        />
-                        <circle
-                          cx={childX}
-                          cy={childY}
-                          r={selectedNode.id === childNode.id ? 22 : 18}
-                          fill="#0f172a"
-                          stroke={childNode.color}
-                          strokeWidth={selectedNode.id === childNode.id ? 3 : 2}
-                          style={{ '--node-color': childNode.color }}
-                        />
-                        <text
-                          x={childX}
-                          y={childY + 32}
-                          textAnchor="middle"
-                          fill="#f8fafc"
-                          fontSize="11"
-                          fontWeight="600"
-                          fontFamily="var(--font-ui)"
-                        >
-                          {childNode.label}
-                        </text>
-                      </g>
-                    );
-                  })}
-
-                  {/* Nodo Categoría Principal */}
-                  <g className="mindmap-node" onClick={() => handleNodeClick(catNode)}>
-                    <rect
-                      x={catX - 65}
-                      y={catY - 22}
-                      width="130"
-                      height="44"
-                      rx="10"
-                      fill="#0f172a"
-                      stroke={catNode.color}
-                      strokeWidth="2.5"
-                      filter="url(#glow)"
-                      style={{ '--node-color': catNode.color }}
-                    />
-                    <text
-                      x={catX}
-                      y={catY + 5}
-                      textAnchor="middle"
-                      fill="#ffffff"
-                      fontSize="13"
-                      fontWeight="700"
-                      fontFamily="var(--font-ui)"
-                    >
-                      {catNode.label}
-                    </text>
-                  </g>
-                </g>
-              );
-            })}
-
-            {/* Nodo Raíz Principal SQL */}
-            <g className="mindmap-node" onClick={() => handleNodeClick(MINDMAP_TREE)}>
-              <circle
-                cx="500"
-                cy="300"
-                r="45"
-                fill="url(#rootGradient)"
-                stroke="#06b6d4"
-                strokeWidth="4"
-                filter="url(#glow)"
-              />
-              <defs>
-                <linearGradient id="rootGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0f172a" />
-                  <stop offset="100%" stopColor="#1e293b" />
-                </linearGradient>
-              </defs>
-              <text x="500" y="296" textAnchor="middle" fill="#06b6d4" fontSize="16" fontWeight="900">
-                SQL
-              </text>
-              <text x="500" y="312" textAnchor="middle" fill="#94a3b8" fontSize="10">
-                ENGINEERING
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* Tooltip Informativo e Interactivo del Nodo Seleccionado */}
-        {selectedNode && (
-          <div className="mindmap-tooltip">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-              <span className="badge badge-cyan" style={{ background: selectedNode.color + '25', color: selectedNode.color, borderColor: selectedNode.color }}>
-                {selectedNode.category || 'CATEGORÍA'}
-              </span>
-              <h3 style={{ fontSize: '1.1rem', color: '#ffffff', margin: 0 }}>
-                {selectedNode.label}
-              </h3>
-            </div>
-            
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: '0.5rem 0 1rem 0' }}>
-              {selectedNode.description}
-            </p>
-
-            {selectedNode.lessonId && (
+        {/* Acceso Rápido a Categorías */}
+        {!selectedCategoryId && (
+          <div className="space-tabs">
+            {MINDMAP_CATEGORIES.map((cat) => (
               <button
-                onClick={() => handleGoToLesson(selectedNode.lessonId)}
-                className="btn-primary"
-                style={{ fontSize: '0.82rem', padding: '0.4rem 1rem' }}
+                key={cat.id}
+                onClick={() => setSelectedCategoryId(cat.id)}
+                className="tab-btn"
+                style={{ '--btn-accent': cat.color }}
               >
-                <BookOpen size={16} />
-                Ir a la Lección y Práctica
-                <ArrowRight size={16} />
+                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: cat.color, marginRight: '6px' }} />
+                {cat.shortLabel}
               </button>
-            )}
+            ))}
           </div>
         )}
       </div>
+
+      {/* Contenedor Principal con Transiciones Suaves (Drill-down) */}
+      <AnimatePresence mode="wait">
+        {selectedCategoryId && activeCategory ? (
+          <CategoryDetailView
+            key={`detail-${selectedCategoryId}`}
+            category={activeCategory}
+            onBack={() => setSelectedCategoryId(null)}
+          />
+        ) : (
+          <motion.div
+            key="base-mindmap"
+            className="mindmap-wrapper"
+            variants={baseMapVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {/* Banner de Ayuda Visual */}
+            <div className="mindmap-hint-banner">
+              <Sparkles size={16} color="var(--accent-cyan)" />
+              <span>Haz clic en cualquier categoría para abrir su vista detallada</span>
+            </div>
+
+            <div className="mindmap-canvas-container">
+              <svg width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  {/* Filtro de resplandor suave */}
+                  <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+
+                  {/* Gradiente del Nodo Central */}
+                  <radialGradient id="rootCenterGradient" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#1e293b" />
+                    <stop offset="70%" stopColor="#0f172a" />
+                    <stop offset="100%" stopColor="#020617" />
+                  </radialGradient>
+                </defs>
+
+                {/* 1. Conexiones Curvas Bezier entre el Centro y las Categorías */}
+                {MINDMAP_CATEGORIES.map((cat) => {
+                  const pos = categoryPositions.find(p => p.id === cat.id) || { x: 500, y: 300 };
+                  const controlX = (500 + pos.x) / 2;
+                  const controlY = (300 + pos.y) / 2;
+
+                  return (
+                    <g key={`conn-${cat.id}`}>
+                      {/* Línea de brillo de fondo */}
+                      <path
+                        d={`M 500 300 Q ${controlX} ${controlY} ${pos.x} ${pos.y}`}
+                        fill="none"
+                        stroke={cat.color}
+                        strokeWidth="5"
+                        opacity="0.15"
+                      />
+                      {/* Línea animada */}
+                      <path
+                        d={`M 500 300 Q ${controlX} ${controlY} ${pos.x} ${pos.y}`}
+                        fill="none"
+                        stroke={cat.color}
+                        strokeWidth="2.5"
+                        opacity="0.75"
+                        className="mindmap-connection"
+                      />
+                    </g>
+                  );
+                })}
+
+                {/* 2. Nodo Central "SQL ENGINEERING" */}
+                <g className="mindmap-center-node">
+                  {/* Anillo de pulso exterior */}
+                  <circle
+                    cx="500"
+                    cy="300"
+                    r="60"
+                    fill="none"
+                    stroke="#06b6d4"
+                    strokeWidth="1.5"
+                    opacity="0.3"
+                    className="center-pulse-ring"
+                  />
+                  {/* Círculo Principal */}
+                  <circle
+                    cx="500"
+                    cy="300"
+                    r="52"
+                    fill="url(#rootCenterGradient)"
+                    stroke="#06b6d4"
+                    strokeWidth="3.5"
+                    filter="url(#softGlow)"
+                  />
+                  {/* Textos del Centro */}
+                  <text x="500" y="295" textAnchor="middle" fill="#06b6d4" fontSize="18" fontWeight="900" letterSpacing="1px">
+                    SQL
+                  </text>
+                  <text x="500" y="315" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="700" letterSpacing="2px">
+                    ENGINEERING
+                  </text>
+                </g>
+
+                {/* 3. Los 5 Recuadros de Categoría Principales */}
+                {MINDMAP_CATEGORIES.map((cat) => {
+                  const pos = categoryPositions.find(p => p.id === cat.id) || { x: 500, y: 300 };
+                  const boxWidth = 168;
+                  const boxHeight = 68;
+                  const boxX = pos.x - boxWidth / 2;
+                  const boxY = pos.y - boxHeight / 2;
+
+                  return (
+                    <g
+                      key={`card-${cat.id}`}
+                      className="mindmap-category-node"
+                      onClick={() => setSelectedCategoryId(cat.id)}
+                      style={{ cursor: 'pointer', '--cat-glow': cat.color }}
+                    >
+                      {/* Fondo de tarjeta */}
+                      <rect
+                        x={boxX}
+                        y={boxY}
+                        width={boxWidth}
+                        height={boxHeight}
+                        rx="14"
+                        fill="#0b1329"
+                        stroke={cat.color}
+                        strokeWidth="2.5"
+                        filter="url(#softGlow)"
+                        className="category-box-rect"
+                      />
+
+                      {/* Etiqueta de la Categoría */}
+                      <text
+                        x={pos.x}
+                        y={pos.y - 8}
+                        textAnchor="middle"
+                        fill="#ffffff"
+                        fontSize="15"
+                        fontWeight="800"
+                        fontFamily="var(--font-ui)"
+                      >
+                        {cat.shortLabel}
+                      </text>
+
+                      {/* Subtítulo / Descripción corta */}
+                      <text
+                        x={pos.x}
+                        y={pos.y + 12}
+                        textAnchor="middle"
+                        fill={cat.color}
+                        fontSize="10.5"
+                        fontWeight="600"
+                        fontFamily="var(--font-ui)"
+                      >
+                        {cat.commands.length} Comandos • Explorar →
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

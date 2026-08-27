@@ -1,89 +1,216 @@
 /**
  * @file mindmap.css
- * @description Estilos visuales para el Mapa Mental Dinámico e Interactivo (SVG / React).
+ * @description Estilos visuales para el Mapa Mental Interactivo y su navegación Drill-down.
  */
 
 .mindmap-wrapper {
   position: relative;
   width: 100%;
-  min-height: 650px;
-  background: radial-gradient(circle at center, #0f172a 0%, #070a12 100%);
+  min-height: 600px;
+  background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   overflow: hidden;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
-.mindmap-controls-bar {
+.mindmap-hint-banner {
   position: absolute;
   top: 1rem;
-  left: 1rem;
-  right: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: rgba(15, 23, 42, 0.85);
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(12px);
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--radius-md);
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
   border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  pointer-events: none;
 }
 
 .mindmap-canvas-container {
   width: 100%;
-  height: 650px;
+  height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Nodos SVG del Mapa Mental */
-.mindmap-node {
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.mindmap-node circle, .mindmap-node rect {
-  transition: all var(--transition-bounce);
-}
-
-.mindmap-node:hover circle, .mindmap-node:hover rect {
-  filter: drop-shadow(0 0 12px var(--node-color, var(--accent-cyan)));
-  transform: scale(1.08);
-}
-
+/* SVG y Animaciones de Conexión */
 .mindmap-connection {
-  stroke-dasharray: 6;
-  animation: dashAnimation 20s linear infinite;
-  transition: stroke 0.3s ease;
+  stroke-dasharray: 6 6;
+  animation: dashStream 25s linear infinite;
 }
 
-@keyframes dashAnimation {
+@keyframes dashStream {
   to {
-    stroke-dashoffset: -100;
+    stroke-dashoffset: -120;
   }
 }
 
-.mindmap-tooltip {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--accent-cyan);
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius-md);
-  max-width: 550px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  animation: slideUp 0.25s ease;
+/* Anillo de pulso del Centro */
+.center-pulse-ring {
+  animation: centerPulse 3.5s ease-in-out infinite;
+  transform-origin: 500px 300px;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translate(-50%, 10px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+@keyframes centerPulse {
+  0%, 100% {
+    r: 58px;
+    opacity: 0.25;
+  }
+  50% {
+    r: 68px;
+    opacity: 0.6;
+  }
+}
+
+/* Interacción con Nodos de Categoría (Sin saltos SVG) */
+.mindmap-category-node {
+  cursor: pointer;
+}
+
+.mindmap-category-node .category-box-rect {
+  transition: fill 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
+}
+
+.mindmap-category-node:hover .category-box-rect {
+  fill: #15223e;
+  stroke-width: 3.5px;
+  filter: drop-shadow(0 0 16px var(--cat-glow, #06b6d4));
+}
+
+.mindmap-category-node text {
+  pointer-events: none;
+  transition: fill 0.2s ease;
+}
+
+/* -------------------------------------------------------------------------- */
+/* VISTA DETALLADA (DRILL-DOWN)                                              */
+/* -------------------------------------------------------------------------- */
+
+.category-detail-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.category-detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-back-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border-subtle);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.btn-back-map:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: var(--cat-color, var(--accent-cyan));
+  color: var(--cat-color, var(--accent-cyan));
+  transform: translateX(-3px);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+
+.category-detail-header {
+  padding: 1.5rem 1.75rem;
+}
+
+.category-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Grilla de Comandos */
+.commands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.command-card {
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.85rem;
+  border-left: 3px solid var(--cmd-color, var(--accent-cyan));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.command-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(6, 182, 212, 0.15);
+  border-color: var(--cmd-color, var(--accent-cyan));
+}
+
+.command-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.command-badge {
+  font-family: var(--font-code);
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid;
+  letter-spacing: 0.3px;
+}
+
+.command-description {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.btn-command-practice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-command-practice:hover {
+  background: var(--accent-cyan);
+  color: #020617;
+  border-color: var(--accent-cyan);
 }

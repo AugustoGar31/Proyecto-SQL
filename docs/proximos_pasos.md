@@ -1,11 +1,12 @@
-## 🌐 Enlace de Acceso Local
+# 📌 Próximos Pasos - NexoSQL
+
+---
+
+🌐 Enlace de Acceso Local
 
 - **URL Servidor Local**: [http://localhost:3000/](http://localhost:3000/) (ó [http://127.0.0.1:3000/](http://127.0.0.1:3000/))
 
 ## 🔮 Tareas Pendientes (Para Realizar Después)
-
-1. **Mejorar el Mapa Mental**:
-   - Continuar enriqueciendo la interactividad visual, animaciones y detalles del árbol SVG de nodos.
 
 1.1 **Hacer un playground**:
 
