@@ -3,12 +3,12 @@
  * @description Componente para mostrar la tarjeta del desafío activo con su consigna, pistas y feedback de validación.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { ExerciseValidatorService } from '../../services/exerciseValidator.js';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { Target, Lightbulb, CheckCircle2, XCircle } from 'lucide-react';
 
-export function ExerciseCard({ exercise, currentResult }) {
+export const ExerciseCard = memo(function ExerciseCard({ exercise, currentResult }) {
   const { completeExercise } = useProgress();
   const [showHint, setShowHint] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
@@ -98,4 +98,4 @@ export function ExerciseCard({ exercise, currentResult }) {
       )}
     </div>
   );
-}
+});

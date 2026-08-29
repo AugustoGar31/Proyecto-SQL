@@ -1,9 +1,4 @@
-/**
- * @file DbEngineContext.jsx
- * @description Contexto de React para proveer el servicio de ejecución SQL WebAssembly a la aplicación.
- */
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { sqlEngine } from '../services/sqlEngineService.js';
 import { useProgress } from './ProgressContext.jsx';
 
@@ -65,7 +60,7 @@ export const DbEngineProvider = ({ children }) => {
   /**
    * Reintenta la inicialización completa del motor SQL y el seeding de datos.
    */
-  const retryInitialization = async () => {
+  const retryInitialization = useCallback(async () => {
     setIsReady(false);
     setInitError(null);
     try {
@@ -79,36 +74,43 @@ export const DbEngineProvider = ({ children }) => {
       setInitError(err.message || 'Error al iniciar la base de datos WebAssembly.');
       setIsReady(false);
     }
-  };
+  }, [currentLesson]);
 
   /**
    * Ejecuta una consulta SQL en la base de datos actual.
    * @param {string} sqlText - Consulta SQL a ejecutar.
    */
-  const runQuery = (sqlText) => {
+  const runQuery = useCallback((sqlText) => {
     return sqlEngine.executeQuery(sqlText);
-  };
+  }, []);
 
   /**
    * Reinicia los datos del esquema activo a su estado inicial de fábrica.
    */
-  const resetCurrentSchema = () => {
+  const resetCurrentSchema = useCallback(() => {
     if (currentSchemaId) {
       sqlEngine.loadSchema(currentSchemaId);
     }
-  };
+  }, [currentSchemaId]);
+
+  const contextValue = useMemo(() => ({
+    isReady,
+    initError,
+    currentSchemaId,
+    runQuery,
+    resetCurrentSchema,
+    retryInitialization
+  }), [
+    isReady,
+    initError,
+    currentSchemaId,
+    runQuery,
+    resetCurrentSchema,
+    retryInitialization
+  ]);
 
   return (
-    <DbEngineContext.Provider
-      value={{
-        isReady,
-        initError,
-        currentSchemaId,
-        runQuery,
-        resetCurrentSchema,
-        retryInitialization
-      }}
-    >
+    <DbEngineContext.Provider value={contextValue}>
       {children}
     </DbEngineContext.Provider>
   );

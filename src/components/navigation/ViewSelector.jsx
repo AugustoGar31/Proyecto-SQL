@@ -10,11 +10,11 @@
  */
 
 import React from 'react';
-import { BookOpen, Terminal, Network, Dumbbell, Database } from 'lucide-react';
+import { Home, BookOpen, Terminal, Network, Dumbbell, Database } from 'lucide-react';
 import { useView } from '../../context/ViewContext.jsx';
 
 export function ViewSelector() {
-  const { activeView, setActiveView } = useView();
+  const { activeView, setActiveView, openHomeModal } = useView();
 
   const views = [
     { id: 'playground', label: 'Taller SQL', icon: Terminal },
@@ -26,6 +26,22 @@ export function ViewSelector() {
 
   return (
     <nav className="space-tabs">
+      {/* Botón de Inicio / Onboarding */}
+      <button
+        onClick={openHomeModal}
+        className="tab-btn"
+        style={{
+          background: 'rgba(6, 182, 212, 0.08)',
+          borderColor: 'rgba(6, 182, 212, 0.3)',
+          color: 'var(--accent-cyan)',
+          fontWeight: 600
+        }}
+        title="Abrir Centro de Inicio y Guía de la Plataforma"
+      >
+        <Home size={16} />
+        <span>Inicio</span>
+      </button>
+
       {views.map((v) => {
         const Icon = v.icon;
         const isActive = activeView === v.id;

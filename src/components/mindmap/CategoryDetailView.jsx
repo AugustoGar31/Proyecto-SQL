@@ -4,55 +4,55 @@
  * Muestra la descripción completa, el listado de comandos y la navegación de regreso al mapa principal.
  */
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, BookOpen, Terminal, Sparkles, Database } from 'lucide-react';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { useView } from '../../context/ViewContext.jsx';
 
-export function CategoryDetailView({ category, onBack }) {
+// Variantes de animación para Framer Motion (estáticas)
+const CONTAINER_VARIANTS = {
+  hidden: { opacity: 0, scale: 0.96, y: 15 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.25, 0.1, 0.25, 1],
+      staggerChildren: 0.06
+    }
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.96,
+    y: -15,
+    transition: { duration: 0.2, ease: 'easeInOut' }
+  }
+};
+
+const ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+};
+
+export const CategoryDetailView = memo(function CategoryDetailView({ category, onBack }) {
   const { selectLesson } = useProgress();
   const { setActiveView } = useView();
 
-  if (!category) return null;
-
-  const handlePracticeCommand = (lessonId) => {
+  const handlePracticeCommand = useCallback((lessonId) => {
     if (lessonId) {
       selectLesson(lessonId);
       setActiveView('playground');
     }
-  };
+  }, [selectLesson, setActiveView]);
 
-  // Variantes de animación para Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 0.96, y: 15 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: [0.25, 0.1, 0.25, 1],
-        staggerChildren: 0.08
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.96,
-      y: -15,
-      transition: { duration: 0.25, ease: 'easeInOut' }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.35 } }
-  };
+  if (!category) return null;
 
   return (
     <motion.div
       className="category-detail-container"
-      variants={containerVariants}
+      variants={CONTAINER_VARIANTS}
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -89,7 +89,7 @@ export function CategoryDetailView({ category, onBack }) {
           borderLeft: `4px solid ${category.color}`,
           boxShadow: `0 0 25px ${category.bgGlow}`
         }}
-        variants={itemVariants}
+        variants={ITEM_VARIANTS}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <div
@@ -131,7 +131,7 @@ export function CategoryDetailView({ category, onBack }) {
             <motion.div
               key={idx}
               className="command-card glass-card"
-              variants={itemVariants}
+              variants={ITEM_VARIANTS}
               whileHover={{ y: -3, transition: { duration: 0.2 } }}
               style={{ '--cmd-color': category.color }}
             >
@@ -160,4 +160,4 @@ export function CategoryDetailView({ category, onBack }) {
       </div>
     </motion.div>
   );
-}
+});

@@ -12,13 +12,15 @@
   border: 1px solid var(--border-subtle);
   overflow: hidden;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .mindmap-hint-banner {
   position: absolute;
   top: 1rem;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0);
   z-index: 10;
   display: flex;
   align-items: center;
@@ -39,12 +41,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateZ(0);
 }
 
 /* SVG y Animaciones de Conexión */
 .mindmap-connection {
   stroke-dasharray: 6 6;
   animation: dashStream 25s linear infinite;
+  will-change: stroke-dashoffset;
 }
 
 @keyframes dashStream {
@@ -53,41 +57,42 @@
   }
 }
 
-/* Anillo de pulso del Centro */
+/* Anillo de pulso del Centro: Acelerado por GPU con scale y opacity */
 .center-pulse-ring {
   animation: centerPulse 3.5s ease-in-out infinite;
   transform-origin: 500px 300px;
+  will-change: transform, opacity;
 }
 
 @keyframes centerPulse {
   0%, 100% {
-    r: 58px;
-    opacity: 0.25;
+    transform: scale(0.92);
+    opacity: 0.2;
   }
   50% {
-    r: 68px;
-    opacity: 0.6;
+    transform: scale(1.15);
+    opacity: 0.55;
   }
 }
 
-/* Interacción con Nodos de Categoría (Sin saltos SVG) */
+/* Interacción con Nodos de Categoría */
 .mindmap-category-node {
   cursor: pointer;
 }
 
 .mindmap-category-node .category-box-rect {
-  transition: fill 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
+  transition: fill 0.25s ease, stroke-width 0.25s ease, filter 0.25s ease;
+  will-change: filter, fill;
 }
 
 .mindmap-category-node:hover .category-box-rect {
   fill: #15223e;
-  stroke-width: 3.5px;
-  filter: drop-shadow(0 0 16px var(--cat-glow, #06b6d4));
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 12px var(--cat-glow, #06b6d4));
 }
 
 .mindmap-category-node text {
   pointer-events: none;
-  transition: fill 0.2s ease;
 }
 
 /* -------------------------------------------------------------------------- */

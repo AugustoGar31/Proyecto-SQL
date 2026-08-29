@@ -3,7 +3,7 @@
  * @description Contexto global de React para la gestión del progreso de aprendizaje del estudiante.
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { storageService } from '../services/storageService.js';
 import { MODULES_DATA } from '../data/modulesData.js';
 
@@ -22,53 +22,69 @@ export const ProgressProvider = ({ children }) => {
     if (currentModule) {
       setActiveModuleId(currentModule.id);
     }
-  }, [activeLessonId]);
+  }, [activeLessonId, currentModule]);
 
   /**
    * Cambia la lección activa actual.
    * @param {string} lessonId - ID de la lección seleccionada.
    */
-  const selectLesson = (lessonId) => {
+  const selectLesson = useCallback((lessonId) => {
     setActiveLessonId(lessonId);
-  };
+  }, []);
 
   /**
    * Registra la resolución correcta de un ejercicio.
    * @param {string} exerciseId - ID del ejercicio resuelto.
    */
-  const completeExercise = (exerciseId) => {
-    const updated = storageService.markExerciseCompleted(currentLesson.id, exerciseId, 100);
-    setProgress(updated);
-  };
+  const completeExercise = useCallback((exerciseId) => {
+    setProgress((prevProgress) => {
+      const updated = storageService.markExerciseCompleted(currentLesson.id, exerciseId, 100);
+      return updated;
+    });
+  }, [currentLesson.id]);
 
   /**
    * Reinicia todo el progreso.
    */
-  const resetAllProgress = () => {
+  const resetAllProgress = useCallback(() => {
     const resetData = storageService.resetProgress();
     setProgress(resetData);
     setActiveLessonId('les-select-basics');
-  };
+  }, []);
 
   // Cálculo de porcentaje global de avance
-  const totalLessons = MODULES_DATA.reduce((acc, m) => acc + m.lessons.length, 0);
+  const totalLessons = useMemo(() => MODULES_DATA.reduce((acc, m) => acc + m.lessons.length, 0), []);
   const completedCount = progress.completedLessons.length;
-  const progressPercentage = Math.min(100, Math.round((completedCount / totalLessons) * 100));
+  const progressPercentage = useMemo(() => Math.min(100, Math.round((completedCount / totalLessons) * 100)), [completedCount, totalLessons]);
+
+  const contextValue = useMemo(() => ({
+    progress,
+    currentModule,
+    currentLesson,
+    activeLessonId,
+    activeModuleId,
+    selectLesson,
+    completeExercise,
+    resetAllProgress,
+    progressPercentage,
+    completedCount,
+    totalLessons
+  }), [
+    progress,
+    currentModule,
+    currentLesson,
+    activeLessonId,
+    activeModuleId,
+    selectLesson,
+    completeExercise,
+    resetAllProgress,
+    progressPercentage,
+    completedCount,
+    totalLessons
+  ]);
 
   return (
-    <ProgressContext.Provider
-      value={{
-        progress,
-        currentModule,
-        currentLesson,
-        activeLessonId,
-        activeModuleId,
-        selectLesson,
-        completeExercise,
-        resetAllProgress,
-        progressPercentage
-      }}
-    >
+    <ProgressContext.Provider value={contextValue}>
       {children}
     </ProgressContext.Provider>
   );

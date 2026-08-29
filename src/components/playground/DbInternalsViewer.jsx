@@ -3,10 +3,10 @@
  * @description Componente para inspeccionar el Plan de Ejecución conceptual "Bajo el Capó" de la BD.
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Cpu, Zap, Activity } from 'lucide-react';
 
-export function DbInternalsViewer({ queryResult, exerciseExplanation }) {
+export const DbInternalsViewer = memo(function DbInternalsViewer({ queryResult, exerciseExplanation }) {
   const explainPlan = queryResult && queryResult.explainPlan ? queryResult.explainPlan : null;
 
   return (
@@ -47,4 +47,4 @@ export function DbInternalsViewer({ queryResult, exerciseExplanation }) {
       )}
     </div>
   );
-}
+});

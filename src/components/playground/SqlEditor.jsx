@@ -4,10 +4,10 @@
  * formateo visual, numeración de líneas y limpieza rápida.
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Play, RotateCcw, Copy, Check } from 'lucide-react';
 
-export function SqlEditor({ value, onChange, onExecute, onReset }) {
+export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, onReset }) {
   const [copied, setCopied] = React.useState(false);
 
   /**
@@ -31,7 +31,7 @@ export function SqlEditor({ value, onChange, onExecute, onReset }) {
       {/* Barra de Herramientas del Editor */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
         <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent-cyan)', fontFamily: 'var(--font-code)' }}>
-          💻 Editor SQL (Ctrl + Enter para ejecutar)
+          💻 Editor SQL
         </span>
         
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -80,9 +80,9 @@ export function SqlEditor({ value, onChange, onExecute, onReset }) {
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button onClick={onExecute} className="btn-primary">
           <Play size={16} fill="currentColor" />
-          Ejecutar Consulta (Ctrl + Enter)
+          Ejecutar Consulta
         </button>
       </div>
     </div>
   );
-}
+});

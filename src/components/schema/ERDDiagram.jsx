@@ -3,12 +3,12 @@
  * @description Visualizador interactivo de Diagramas Entidad-Relación (ERD) para los esquemas relacionales.
  */
 
-import React, { useState } from 'react';
+import React, { memo } from 'react';
 import { SAMPLE_SCHEMAS } from '../../data/schemas/index.js';
 import { useDbEngine } from '../../context/DbEngineContext.jsx';
 import { Database, Key, Table as TableIcon } from 'lucide-react';
 
-export function ERDDiagram() {
+export const ERDDiagram = memo(function ERDDiagram() {
   const { currentSchemaId } = useDbEngine();
   const schemaKey = currentSchemaId || 'universidad';
   const schema = SAMPLE_SCHEMAS[schemaKey] || SAMPLE_SCHEMAS['universidad'];
@@ -55,9 +55,9 @@ export function ERDDiagram() {
       </div>
     </div>
   );
-}
+});
 
-function TableBox({ name, fields }) {
+const TableBox = memo(function TableBox({ name, fields }) {
   return (
     <div style={{ background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', padding: '0.75rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-cyan)', fontWeight: 700, fontSize: '0.88rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.4rem', marginBottom: '0.5rem' }}>
@@ -82,4 +82,4 @@ function TableBox({ name, fields }) {
       </div>
     </div>
   );
-}
+});

@@ -8,36 +8,36 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MINDMAP_CATEGORIES } from './mindMapData.js';
 import { CategoryDetailView } from './CategoryDetailView.jsx';
-import { Network, Sparkles, Layers, ArrowRight } from 'lucide-react';
+import { Network, Sparkles } from 'lucide-react';
+
+// Variantes de animación para el mapa base (estáticas en módulo para evitar re-instanciación)
+const BASE_MAP_VARIANTS = {
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }
+  },
+  exit: {
+    opacity: 0,
+    scale: 1.04,
+    transition: { duration: 0.25, ease: 'easeInOut' }
+  }
+};
+
+// Coordenadas fijas simétricas (estáticas)
+const CATEGORY_POSITIONS = [
+  { id: 'dql', x: 500, y: 95 },         // Superior Centro
+  { id: 'dml', x: 740, y: 220 },        // Superior Derecha
+  { id: 'ddl', x: 670, y: 475 },        // Inferior Derecha
+  { id: 'tcl', x: 330, y: 475 },        // Inferior Izquierda
+  { id: 'procedural', x: 260, y: 220 }  // Superior Izquierda
+];
 
 export function MindMapView() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
-  const activeCategory = MINDMAP_CATEGORIES.find(c => c.id === selectedCategoryId);
-
-  // Variantes de animación para el mapa base
-  const baseMapVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }
-    },
-    exit: {
-      opacity: 0,
-      scale: 1.05,
-      transition: { duration: 0.3, ease: 'easeInOut' }
-    }
-  };
-
-  // Coordenadas fijas simétricas y equilibradas para las 5 categorías (Canvas 1000 x 600)
-  const categoryPositions = [
-    { id: 'dql', x: 500, y: 95 },         // Superior Centro
-    { id: 'dml', x: 740, y: 220 },        // Superior Derecha
-    { id: 'ddl', x: 670, y: 475 },        // Inferior Derecha
-    { id: 'tcl', x: 330, y: 475 },        // Inferior Izquierda
-    { id: 'procedural', x: 260, y: 220 }  // Superior Izquierda
-  ];
+  const activeCategory = selectedCategoryId ? MINDMAP_CATEGORIES.find(c => c.id === selectedCategoryId) : null;
 
   return (
     <div className="space-container">
@@ -85,7 +85,7 @@ export function MindMapView() {
           <motion.div
             key="base-mindmap"
             className="mindmap-wrapper"
-            variants={baseMapVariants}
+            variants={BASE_MAP_VARIANTS}
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -99,12 +99,6 @@ export function MindMapView() {
             <div className="mindmap-canvas-container">
               <svg width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
                 <defs>
-                  {/* Filtro de resplandor suave */}
-                  <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="5" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
-
                   {/* Gradiente del Nodo Central */}
                   <radialGradient id="rootCenterGradient" cx="50%" cy="50%" r="50%">
                     <stop offset="0%" stopColor="#1e293b" />
@@ -115,7 +109,7 @@ export function MindMapView() {
 
                 {/* 1. Conexiones Curvas Bezier entre el Centro y las Categorías */}
                 {MINDMAP_CATEGORIES.map((cat) => {
-                  const pos = categoryPositions.find(p => p.id === cat.id) || { x: 500, y: 300 };
+                  const pos = CATEGORY_POSITIONS.find(p => p.id === cat.id) || { x: 500, y: 300 };
                   const controlX = (500 + pos.x) / 2;
                   const controlY = (300 + pos.y) / 2;
 
@@ -162,8 +156,7 @@ export function MindMapView() {
                     r="52"
                     fill="url(#rootCenterGradient)"
                     stroke="#06b6d4"
-                    strokeWidth="3.5"
-                    filter="url(#softGlow)"
+                    strokeWidth="3"
                   />
                   {/* Textos del Centro */}
                   <text x="500" y="295" textAnchor="middle" fill="#06b6d4" fontSize="18" fontWeight="900" letterSpacing="1px">
@@ -176,7 +169,7 @@ export function MindMapView() {
 
                 {/* 3. Los 5 Recuadros de Categoría Principales */}
                 {MINDMAP_CATEGORIES.map((cat) => {
-                  const pos = categoryPositions.find(p => p.id === cat.id) || { x: 500, y: 300 };
+                  const pos = CATEGORY_POSITIONS.find(p => p.id === cat.id) || { x: 500, y: 300 };
                   const boxWidth = 168;
                   const boxHeight = 68;
                   const boxX = pos.x - boxWidth / 2;
@@ -199,7 +192,6 @@ export function MindMapView() {
                         fill="#0b1329"
                         stroke={cat.color}
                         strokeWidth="2.5"
-                        filter="url(#softGlow)"
                         className="category-box-rect"
                       />
 

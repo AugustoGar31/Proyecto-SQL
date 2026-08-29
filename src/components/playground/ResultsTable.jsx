@@ -3,10 +3,10 @@
  * @description Componente de visualización para los resultados de la consulta SQL (filas, columnas, latencia).
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Clock, Database, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export function ResultsTable({ queryResult }) {
+export const ResultsTable = memo(function ResultsTable({ queryResult }) {
   if (!queryResult) {
     return (
       <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -97,4 +97,4 @@ export function ResultsTable({ queryResult }) {
       </div>
     </div>
   );
-}
+});

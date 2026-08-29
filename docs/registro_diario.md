@@ -27,3 +27,15 @@
 - **Framer Motion**: Integración de animaciones suaves y elegantes (`AnimatePresence`, `fade-in`, `zoom`) sin tirones ni transformaciones SVG caóticas.
 - **Botón de Regreso**: Botón `← Volver al Mapa` para retornar con transición fluida al mapa general.
 - **Contenidos Actualizados**: Carga exacta de las descripciones y comandos para DQL, DML, DDL, TCL y SQL Procedural con accesos directos al Taller Práctico.
+
+## 📌 28 de Agosto, 2026
+
+- **Limpieza de UI**: Eliminación de textos de atajos `(Ctrl + Enter)` en el editor y botón de ejecución.
+- **Playground Libre**: Botón de acceso y modo Sandbox en el taller para ejecutar cualquier consulta SQL en `sql.js` WASM sin validaciones de ejercicios.
+
+## 📌 29 de Agosto, 2026
+
+- **Splash Screen**: Pantalla de bienvenida con pulso neón para el logo y salida suave con `AnimatePresence`.
+- **Botón Inicio**: Acceso al Onboarding integrado en el Navbar a la izquierda de "Taller SQL".
+- **Modal Bento Box & Carrusel**: Modal glassmórfico de inicio con cuadrícula Bento, carrusel interactivo de 3 slides y tarjeta de progreso del estudiante.
+- **Optimización Web**: Code-Splitting con `React.lazy`, memoización del contexto/árbol de renderizado y aceleración por GPU (60fps) en Glassmorfismo y Mapa Mental.
