@@ -1,7 +1,5 @@
 # 📅 Bitácora Diaria de Cambios - NexoSQL
 
----
-
 ## 📌 24 de Agosto, 2026
 
 - **Git & GitHub**: Repositorio inicial configurado en `https://github.com/AugustoGar31/Proyecto-SQL.git` (rama `main`).
