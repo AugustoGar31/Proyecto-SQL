@@ -10,16 +10,12 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Terminal,
   Network,
   Dumbbell,
   Database,
   Trophy,
   Rocket,
-  CheckCircle2,
-  Zap,
-  BookOpen,
   ArrowRight
 } from 'lucide-react';
 import { useView } from '../../context/ViewContext.jsx';
@@ -160,27 +156,6 @@ export function HomeOnboardingModal() {
           </div>
         </div>
       )
-    },
-    {
-      id: 2,
-      badge: 'Filosofía & Motivación',
-      badgeColor: 'var(--accent-emerald)',
-      title: 'Piensa como un Ingeniero de Datos',
-      subtitle: 'La maestría en SQL no consiste en memorizar comandos, sino en estructurar datos.',
-      icon: Sparkles,
-      content: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginTop: '0.5rem' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: 'var(--radius-sm)', padding: '1rem' }}>
-            <p style={{ color: '#e6fffa', fontSize: '0.92rem', lineHeight: 1.6, margin: 0, fontStyle: 'italic' }}>
-              "Una base de datos bien diseñada y una consulta optimizada son el corazón invisible de las aplicaciones más veloces del mundo."
-            </p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-            <Zap size={16} color="var(--accent-amber)" />
-            <span>Aprovecha la pestaña <strong>"Bajo el Capó"</strong> para ver cómo el motor evalúa tus consultas.</span>
-          </div>
-        </div>
-      )
     }
   ];
 
@@ -192,7 +167,7 @@ export function HomeOnboardingModal() {
     setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const current = slides[activeSlide];
+  const current = slides[activeSlide] || slides[0];
 
   return (
     <AnimatePresence>

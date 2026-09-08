@@ -54,6 +54,9 @@ export const ResultsTable = memo(function ResultsTable({ queryResult }) {
   }
 
   const { columns, values, rowsAffected, executionTimeMs } = queryResult;
+  const MAX_DISPLAY_ROWS = 100;
+  const isCapped = values && values.length > MAX_DISPLAY_ROWS;
+  const displayRows = isCapped ? values.slice(0, MAX_DISPLAY_ROWS) : values;
 
   return (
     <div className="glass-card" style={{ padding: '1.25rem' }}>
@@ -83,7 +86,7 @@ export const ResultsTable = memo(function ResultsTable({ queryResult }) {
             </tr>
           </thead>
           <tbody>
-            {values.map((row, rIdx) => (
+            {displayRows.map((row, rIdx) => (
               <tr key={rIdx}>
                 {row.map((val, cIdx) => (
                   <td key={cIdx}>
@@ -95,6 +98,12 @@ export const ResultsTable = memo(function ResultsTable({ queryResult }) {
           </tbody>
         </table>
       </div>
+
+      {isCapped && (
+        <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+          ⚡ Mostrando las primeras {MAX_DISPLAY_ROWS} de {rowsAffected} filas para garantizar máxima fluidez de la interfaz.
+        </div>
+      )}
     </div>
   );
 });

@@ -16,7 +16,34 @@ export const SqlEditor = memo(function SqlEditor({
   onReset,
   placeholder = STRICT_SQL_TEMPLATE
 }) {
+  const [internalCode, setInternalCode] = React.useState(value);
   const [copied, setCopied] = React.useState(false);
+
+  // Sincronizar buffer solo si la prop externa 'value' cambia de referencia o reset
+  React.useEffect(() => {
+    setInternalCode(value);
+  }, [value]);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setInternalCode(val);
+    if (onChange) {
+      onChange(val);
+    }
+  };
+
+  const handleExecute = () => {
+    if (onExecute) {
+      onExecute(internalCode);
+    }
+  };
+
+  const handleReset = () => {
+    setInternalCode(value);
+    if (onReset) {
+      onReset();
+    }
+  };
 
   /**
    * Captura la combinación Ctrl+Enter o Cmd+Enter para ejecutar la consulta.
@@ -24,12 +51,12 @@ export const SqlEditor = memo(function SqlEditor({
   const handleKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
-      onExecute();
+      handleExecute();
     }
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(value || '');
+    navigator.clipboard.writeText(internalCode || '');
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -55,7 +82,7 @@ export const SqlEditor = memo(function SqlEditor({
           
           {onReset && (
             <button
-              onClick={onReset}
+              onClick={handleReset}
               className="btn-glass"
               style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
               title="Restablecer plantilla inicial"
@@ -69,8 +96,8 @@ export const SqlEditor = memo(function SqlEditor({
 
       {/* Área de Texto Monospaced Limpia */}
       <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={internalCode}
+        onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         rows={7}
@@ -89,7 +116,7 @@ export const SqlEditor = memo(function SqlEditor({
 
       {/* Botón Principal de Ejecución */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={onExecute} className="btn-primary" type="button">
+        <button onClick={handleExecute} className="btn-primary" type="button">
           <Play size={16} fill="currentColor" />
           Ejecutar Consulta
         </button>

@@ -27,12 +27,14 @@ export function WorkspaceView() {
   // Estados del Modo Lección / Desafío
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'internals'
   const [editorSql, setEditorSql] = useState(STRICT_SQL_TEMPLATE);
+  const editorSqlRef = React.useRef(STRICT_SQL_TEMPLATE);
   const [queryResult, setQueryResult] = useState(null);
   const [showErd, setShowErd] = useState(false);
 
   // Estados del Modo Playground Libre
   const [isPlaygroundMode, setIsPlaygroundMode] = useState(false);
   const [playgroundSql, setPlaygroundSql] = useState(DEFAULT_PLAYGROUND_SQL);
+  const playgroundSqlRef = React.useRef(DEFAULT_PLAYGROUND_SQL);
   const [playgroundResult, setPlaygroundResult] = useState(null);
   const [playgroundTab, setPlaygroundTab] = useState('editor'); // 'editor' | 'internals'
 
@@ -40,30 +42,36 @@ export function WorkspaceView() {
 
   useEffect(() => {
     if (activeExercise) {
+      editorSqlRef.current = STRICT_SQL_TEMPLATE;
       setEditorSql(STRICT_SQL_TEMPLATE);
       setQueryResult(null);
     }
   }, [activeExercise]);
 
-  const handleExecuteSql = useCallback(() => {
-    if (!editorSql.trim()) return;
-    const res = runQuery(editorSql);
+  const handleExecuteSql = useCallback((sqlText) => {
+    const code = typeof sqlText === 'string' ? sqlText : editorSqlRef.current;
+    if (!code || !code.trim()) return;
+    const res = runQuery(code);
     setQueryResult(res);
-  }, [editorSql, runQuery]);
+  }, [runQuery]);
 
-  const handleExecutePlayground = useCallback(() => {
-    if (!playgroundSql.trim()) return;
-    const res = runQuery(playgroundSql);
+  const handleExecutePlayground = useCallback((sqlText) => {
+    const code = typeof sqlText === 'string' ? sqlText : playgroundSqlRef.current;
+    if (!code || !code.trim()) return;
+    const res = runQuery(code);
     setPlaygroundResult(res);
-  }, [playgroundSql, runQuery]);
+  }, [runQuery]);
 
   const handleResetEditor = useCallback(() => {
+    editorSqlRef.current = STRICT_SQL_TEMPLATE;
     setEditorSql(STRICT_SQL_TEMPLATE);
     setQueryResult(null);
   }, []);
 
   const handleResetPlayground = useCallback(() => {
+    playgroundSqlRef.current = DEFAULT_PLAYGROUND_SQL;
     setPlaygroundSql(DEFAULT_PLAYGROUND_SQL);
+    setPlaygroundResult(null);
   }, []);
 
   if (initError) {
@@ -173,7 +181,7 @@ export function WorkspaceView() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <SqlEditor
                 value={playgroundSql}
-                onChange={setPlaygroundSql}
+                onChange={(val) => { playgroundSqlRef.current = val; }}
                 onExecute={handleExecutePlayground}
                 onReset={handleResetPlayground}
               />
@@ -227,7 +235,7 @@ export function WorkspaceView() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <SqlEditor
                     value={editorSql}
-                    onChange={setEditorSql}
+                    onChange={(val) => { editorSqlRef.current = val; }}
                     onExecute={handleExecuteSql}
                     onReset={handleResetEditor}
                   />

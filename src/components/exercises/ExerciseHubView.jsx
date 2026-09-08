@@ -28,7 +28,16 @@ export function ExerciseHubView() {
 
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'COMPLETED' | 'PENDING'
   const [categoryFilter, setCategoryFilter] = useState('ALL'); // 'ALL' | 'DQL' | 'DML' | 'DDL' | 'TCL' | 'PROCEDURAL'
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce ligero (150ms) para no recalcular 50+ tarjetas en cada pulsación
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   // Unificar ejercicios curriculares con el catálogo de Katas
   const allKatas = useMemo(() => {
@@ -67,9 +76,9 @@ export function ExerciseHubView() {
       // Filtro de Categoría
       if (categoryFilter !== 'ALL' && k.category !== categoryFilter) return false;
 
-      // Búsqueda por texto
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
+      // Búsqueda por texto (utiliza término debounced)
+      if (debouncedSearch.trim()) {
+        const q = debouncedSearch.toLowerCase();
         const matchesTitle = k.title.toLowerCase().includes(q);
         const matchesPrompt = (k.prompt || '').toLowerCase().includes(q);
         const matchesDepartment = k.businessCase?.department?.toLowerCase().includes(q);
@@ -78,7 +87,7 @@ export function ExerciseHubView() {
 
       return true;
     });
-  }, [allKatas, statusFilter, categoryFilter, searchQuery, progress.completedExercises]);
+  }, [allKatas, statusFilter, categoryFilter, debouncedSearch, progress.completedExercises]);
 
   const handleStartKata = (kata) => {
     if (kata.lessonId) {
@@ -103,14 +112,14 @@ export function ExerciseHubView() {
           </p>
         </div>
 
-        {/* Buscador Rápido */}
+        {/* Buscador Rápido con Debounce */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-subtle)', padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-md)', minWidth: '240px' }}>
           <Search size={16} color="var(--text-muted)" />
           <input
             type="text"
             placeholder="Buscar por caso, cláusula..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             style={{ background: 'transparent', border: 'none', color: '#ffffff', fontSize: '0.85rem', outline: 'none', width: '100%' }}
           />
         </div>
@@ -173,7 +182,7 @@ export function ExerciseHubView() {
             return (
               <div
                 key={kata.id}
-                className="glass-card"
+                className="kata-card"
                 style={{
                   padding: '1.25rem',
                   display: 'flex',

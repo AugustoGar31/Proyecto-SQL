@@ -52,3 +52,10 @@
 - **Limpieza del Editor SQL**: Inicialización universal con template estricto (`-- Escribe tu consulta SQL aquí\nSELECT `), desacoplando la solución para evitar fugas pedagógicas.
 - **Pistas a 2 Niveles Conceptuales**: Refactorización de `TieredHintsPanel.jsx` eliminando el nivel 3 y los bloques de código SQL; ambas pistas son estrictamente conceptuales (indirecta y directa).
 - **Calibración de Katas (UCC & aprendesql.dev)**: Generación de 5 Katas de negocio ancladas al esquema universitario SiGUE y al estilo directo y pedagógico de `aprendesql.dev`.
+- **Limpieza de Onboarding (Carrusel Bento)**: Eliminación del slide "FILOSOFÍA & MOTIVACIÓN" en `HomeOnboardingModal.jsx`, remoción de imports huérfanos y recalibración dinámica del carrusel a 2 pantallas (Bienvenida y Herramientas).
+- **Optimización de Rendimiento Web (60 FPS)**:
+  - _GPU & Scroll_: Eliminación de `background-attachment: fixed` reemplazándolo por un pseudoelemento `::before` acelerado por hardware para erradicar repintados masivos en scroll.
+  - _Glassmorfismo Liviano_: Reducción de `--backdrop-blur` de 16px a 8px (4x más rápido en fragment shaders) y remoción de `will-change: transform` estáticos innecesarios.
+  - _Catálogo de Katas_: Nueva clase `.kata-card` sin desenfoque pesado en lote para 50+ tarjetas y debounce de 150ms en la búsqueda en vivo en `ExerciseHubView.jsx`.
+  - _Editor SQL a 0 Latencia_: Aislamiento del buffer de escritura en `SqlEditor.jsx` mediante referencias en `WorkspaceView.jsx`, eliminando re-renders del layout y componentes hermanos por cada tecla pulsada.
+  - _Protección DOM en Resultados_: Límite visual de renderizado a 100 filas en `ResultsTable.jsx` para proteger la memoria ante consultas masivas.

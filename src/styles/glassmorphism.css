@@ -10,8 +10,6 @@
   border: var(--glass-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
-  transform: translateZ(0);
-  backface-visibility: hidden;
   transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
@@ -20,13 +18,27 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* Tarjeta ligera de alto rendimiento para listas masivas (+50 Katas) */
+.kata-card {
+  background: rgba(15, 23, 42, 0.82);
+  border: var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.kata-card:hover {
+  border-color: var(--border-highlight);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .glass-card-interactive {
   cursor: pointer;
-  will-change: transform;
 }
 
 .glass-card-interactive:hover {
-  transform: translateY(-2px) translateZ(0);
+  transform: translateY(-2px);
   border-color: var(--accent-cyan);
   box-shadow: var(--glow-cyan);
 }
@@ -36,7 +48,6 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 1.25rem;
-  transform: translateZ(0);
 }
 
 .glass-input {
@@ -68,8 +79,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transform: translateZ(0);
-  will-change: transform;
   transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
@@ -77,7 +86,7 @@
   background: rgba(255, 255, 255, 0.12);
   border-color: var(--accent-cyan);
   color: #ffffff;
-  transform: translateY(-1px) translateZ(0);
+  transform: translateY(-1px);
 }
 
 .btn-primary {
@@ -93,13 +102,11 @@
   align-items: center;
   gap: 0.5rem;
   box-shadow: 0 4px 14px var(--accent-cyan-glow);
-  transform: translateZ(0);
-  will-change: transform;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px) translateZ(0);
+  transform: translateY(-1px);
   box-shadow: 0 6px 20px var(--accent-cyan-glow);
   filter: brightness(1.1);
 }
@@ -117,13 +124,11 @@
   align-items: center;
   gap: 0.5rem;
   box-shadow: 0 4px 14px var(--accent-indigo-glow);
-  transform: translateZ(0);
-  will-change: transform;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
 }
 
 .btn-secondary:hover {
-  transform: translateY(-1px) translateZ(0);
+  transform: translateY(-1px);
   box-shadow: 0 6px 20px var(--accent-indigo-glow);
   filter: brightness(1.1);
 }
@@ -131,5 +136,5 @@
 .hover-highlight:hover {
   background: rgba(255, 255, 255, 0.08) !important;
   border-color: var(--accent-cyan) !important;
-  transform: translateY(-1px) translateZ(0);
+  transform: translateY(-1px);
 }
