@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { SqlEditor } from './SqlEditor.jsx';
+import { SqlEditor, STRICT_SQL_TEMPLATE } from './SqlEditor.jsx';
 import { ResultsTable } from './ResultsTable.jsx';
 import { DbInternalsViewer } from './DbInternalsViewer.jsx';
 import { ExerciseCard } from '../exercises/ExerciseCard.jsx';
@@ -26,7 +26,7 @@ export function WorkspaceView() {
 
   // Estados del Modo Lección / Desafío
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'internals'
-  const [editorSql, setEditorSql] = useState('');
+  const [editorSql, setEditorSql] = useState(STRICT_SQL_TEMPLATE);
   const [queryResult, setQueryResult] = useState(null);
   const [showErd, setShowErd] = useState(false);
 
@@ -40,7 +40,7 @@ export function WorkspaceView() {
 
   useEffect(() => {
     if (activeExercise) {
-      setEditorSql(activeExercise.initialCode);
+      setEditorSql(STRICT_SQL_TEMPLATE);
       setQueryResult(null);
     }
   }, [activeExercise]);
@@ -58,10 +58,9 @@ export function WorkspaceView() {
   }, [playgroundSql, runQuery]);
 
   const handleResetEditor = useCallback(() => {
-    if (activeExercise) {
-      setEditorSql(activeExercise.initialCode);
-    }
-  }, [activeExercise]);
+    setEditorSql(STRICT_SQL_TEMPLATE);
+    setQueryResult(null);
+  }, []);
 
   const handleResetPlayground = useCallback(() => {
     setPlaygroundSql(DEFAULT_PLAYGROUND_SQL);

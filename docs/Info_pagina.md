@@ -3,7 +3,7 @@
 ## 🏷️ Logo / Nombre
 
 - **Nombre del Proyecto:** NexoSQL
-- **Subtítulo / Concepto:** QueryMaster Academy (Plataforma Educativa de SQL & Bases de Datos Relacionales)
+- **Subtítulo / Concepto:** Plataforma Educativa de SQL & Bases de Datos Relacionales
 - **Identidad Visual / Logo:**
   - **Navbar:** Cilindro relacional clásico de base de datos con estética Cyber-Tech en PNG transparente ([`public/navbar-logo.png`](file:///c:/Users/Usuario/Documents/Pagina%20SQL/public/navbar-logo.png)).
   - **Favicon & Splash:** Prisma relacional 3D con resplandor neón ([`public/favicon.png`](file:///c:/Users/Usuario/Documents/Pagina%20SQL/public/favicon.png)).

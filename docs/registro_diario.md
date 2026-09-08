@@ -46,3 +46,9 @@
 
 - **Arquitectura de Libretos y Módulo Cero**: Diseño de las 4 fases de actualización (Sidebar de progresión bloqueada, sistema de 3 pistas escalonadas y +50 Katas basadas en casos de negocio).
 - **Procesamiento de Documentos**: Extracción y diseño del índice de Katas a partir de los TPs universitarios (Universidad, Pedidos, Finanzas).
+
+## 📌 8 de Septiembre, 2026
+
+- **Limpieza del Editor SQL**: Inicialización universal con template estricto (`-- Escribe tu consulta SQL aquí\nSELECT `), desacoplando la solución para evitar fugas pedagógicas.
+- **Pistas a 2 Niveles Conceptuales**: Refactorización de `TieredHintsPanel.jsx` eliminando el nivel 3 y los bloques de código SQL; ambas pistas son estrictamente conceptuales (indirecta y directa).
+- **Calibración de Katas (UCC & aprendesql.dev)**: Generación de 5 Katas de negocio ancladas al esquema universitario SiGUE y al estilo directo y pedagógico de `aprendesql.dev`.

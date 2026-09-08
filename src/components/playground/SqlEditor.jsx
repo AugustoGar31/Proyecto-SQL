@@ -1,13 +1,21 @@
 /**
  * @file SqlEditor.jsx
- * @description Editor de código SQL con soporte para atajos de teclado (Ctrl + Enter),
- * formateo visual, numeración de líneas y limpieza rápida.
+ * @description Editor de código SQL con plantilla inicial estricta,
+ * atajos de teclado (Ctrl + Enter), copia rápida y reset al estado base pedagógico.
  */
 
 import React, { memo } from 'react';
 import { Play, RotateCcw, Copy, Check } from 'lucide-react';
 
-export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, onReset }) {
+export const STRICT_SQL_TEMPLATE = `-- Escribe tu consulta SQL aquí\nSELECT `;
+
+export const SqlEditor = memo(function SqlEditor({
+  value = STRICT_SQL_TEMPLATE,
+  onChange,
+  onExecute,
+  onReset,
+  placeholder = STRICT_SQL_TEMPLATE
+}) {
   const [copied, setCopied] = React.useState(false);
 
   /**
@@ -21,7 +29,7 @@ export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, o
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(value);
+    navigator.clipboard.writeText(value || '');
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -40,6 +48,7 @@ export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, o
             className="btn-glass"
             style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
             title="Copiar código"
+            type="button"
           >
             {copied ? <Check size={14} color="var(--accent-emerald)" /> : <Copy size={14} />}
           </button>
@@ -49,7 +58,8 @@ export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, o
               onClick={onReset}
               className="btn-glass"
               style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
-              title="Restablecer consulta"
+              title="Restablecer plantilla inicial"
+              type="button"
             >
               <RotateCcw size={14} />
             </button>
@@ -57,14 +67,15 @@ export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, o
         </div>
       </div>
 
-      {/* Creador de Área de Texto con Fuente Monospaced */}
+      {/* Área de Texto Monospaced Limpia */}
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="-- Escribe tu consulta SQL aquí... Ej: SELECT * FROM estudiantes;"
+        placeholder={placeholder}
         rows={7}
         className="glass-input"
+        spellCheck="false"
         style={{
           width: '100%',
           fontFamily: 'var(--font-code)',
@@ -78,7 +89,7 @@ export const SqlEditor = memo(function SqlEditor({ value, onChange, onExecute, o
 
       {/* Botón Principal de Ejecución */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={onExecute} className="btn-primary">
+        <button onClick={onExecute} className="btn-primary" type="button">
           <Play size={16} fill="currentColor" />
           Ejecutar Consulta
         </button>
