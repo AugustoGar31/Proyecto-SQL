@@ -8,6 +8,7 @@ export const MODULE_6_DML = {
   title: '6. Manipulación de Datos (DML)',
   description: 'Inserta nuevos registros, modifica datos existentes y elimina filas respetando la integridad referencial.',
   icon: 'Edit3',
+  categoryCode: 'DML',
   lessons: [
     {
       id: 'les-dml-operations',
@@ -33,15 +34,36 @@ WHERE id_producto = 1;
         {
           id: 'ex-dml-1',
           title: 'Reabastecer Inventario de Producto',
+          category: 'DML',
           prompt: 'Incrementa en 20 unidades el stock del producto con id_producto = 1 en la tabla productos.',
-          initialCode: 'UPDATE productos SET stock = ... WHERE id_producto = 1;',
+          initialCode: `-- Escribe tu sentencia DML aquí
+UPDATE productos
+SET stock = stock + 20
+WHERE id_producto = 1;`,
           expectedQuery: 'UPDATE productos SET stock = stock + 20 WHERE id_producto = 1;',
           hints: [
-            'Utiliza la sintaxis: UPDATE productos SET stock = stock + 20 WHERE id_producto = 1;'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Utiliza la cláusula UPDATE productos SET stock = stock + 20 WHERE id_producto = 1;'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'UPDATE productos\nSET stock = stock + 20\nWHERE id_producto = 1;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'UPDATE modifica atributos in-place de los registros que cumplen el predicado del WHERE.'
+            }
           ],
           explanation: {
-            theory: 'UPDATE modifica atributos de registros existentes que cumplen la condición del WHERE.',
-            underTheHood: '⚡ **Bajo el Capó:** Se localiza la página de disco del registro, se actualiza el valor y se marca la página como dirty en la memoria buffer pool.'
+            concept: 'UPDATE modifica atributos de registros existentes que cumplen la condición del WHERE.',
+            underTheHood: '⚡ Bajo el Capó: Se localiza la página de disco del registro, se actualiza el valor y se marca la página como dirty en el Buffer Pool.'
           }
         }
       ]

@@ -8,6 +8,7 @@ export const MODULE_5_WINDOW = {
   title: '5. Funciones de Ventana (Analytics SQL)',
   description: 'Calcula rankings, totales acumulados y promedios móviles sin colapsar las filas de la consulta (OVER, PARTITION BY).',
   icon: 'TrendingUp',
+  categoryCode: 'DQL',
   lessons: [
     {
       id: 'les-window-functions',
@@ -30,15 +31,36 @@ FROM estudiantes;
         {
           id: 'ex-win-1',
           title: 'Ranking de Estudiantes por Carrera',
+          category: 'DQL',
           prompt: 'Obtén nombre, carrera, promedio y asigna un ranking por carrera usando ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) con el alias "ranking".',
-          initialCode: 'SELECT nombre, carrera, promedio, ROW_NUMBER() OVER(...) AS ranking FROM estudiantes;',
+          initialCode: `-- Escribe tu consulta aquí
+SELECT nombre, carrera, promedio,
+       ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) AS ranking
+FROM estudiantes;`,
           expectedQuery: 'SELECT nombre, carrera, promedio, ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) AS ranking FROM estudiantes;',
           hints: [
-            'Usa PARTITION BY carrera dentro de la cláusula OVER().'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Usa PARTITION BY carrera dentro de la cláusula OVER() y ordena por promedio DESC.'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'SELECT nombre, carrera, promedio, ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) AS ranking FROM estudiantes;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'PARTITION BY divide el conjunto en sub-ventanas independientes por carrera sin colapsar las tuplas.'
+            }
           ],
           explanation: {
-            theory: 'PARTITION BY divide el conjunto en sub-ventanas independientes por carrera.',
-            underTheHood: '⚡ **Bajo el Capó:** El motor aplica un Window Aggregate Operator sobre los datos previamente ordenados por el buffer.'
+            concept: 'PARTITION BY divide el conjunto en sub-ventanas independientes por carrera.',
+            underTheHood: '⚡ Bajo el Capó: El motor aplica un Window Aggregate Operator sobre los datos previamente ordenados por el buffer.'
           }
         }
       ]

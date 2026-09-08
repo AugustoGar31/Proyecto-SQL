@@ -1,8 +1,10 @@
 /**
  * @file index.js
- * @description Exportador principal del Curriculum Ampliado de 10 Módulos de Aprendizaje SQL.
+ * @description Exportador principal del Curriculum Ampliado de 11 Módulos de Aprendizaje SQL
+ * (Módulo 0: Fundamentos + Módulos 1 a 10).
  */
 
+import { MODULE_0_INTRO } from './module0_intro.js';
 import { MODULE_1_DQL } from './module1_dql.js';
 import { MODULE_2_AGGREGATIONS } from './module2_aggregations.js';
 import { MODULE_3_JOINS } from './module3_joins.js';
@@ -15,6 +17,7 @@ import { MODULE_9_PROCEDURAL } from './module9_procedural.js';
 import { MODULE_10_TRANSACTIONS } from './module10_transactions.js';
 
 export const CURRICULUM_DATA = [
+  MODULE_0_INTRO,
   MODULE_1_DQL,
   MODULE_2_AGGREGATIONS,
   MODULE_3_JOINS,

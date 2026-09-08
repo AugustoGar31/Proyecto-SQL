@@ -1,16 +1,17 @@
 /**
  * @file ExerciseCard.jsx
- * @description Componente para mostrar la tarjeta del desafío activo con su consigna, pistas y feedback de validación.
+ * @description Componente para mostrar la tarjeta del desafío activo con su consigna,
+ * sistema de pistas escalonadas (3 niveles) y feedback de validación en tiempo real.
  */
 
 import React, { useState, useEffect, memo } from 'react';
 import { ExerciseValidatorService } from '../../services/exerciseValidator.js';
 import { useProgress } from '../../context/ProgressContext.jsx';
-import { Target, Lightbulb, CheckCircle2, XCircle } from 'lucide-react';
+import { TieredHintsPanel } from './TieredHintsPanel.jsx';
+import { Target, CheckCircle2, XCircle, Sparkles, Building } from 'lucide-react';
 
 export const ExerciseCard = memo(function ExerciseCard({ exercise, currentResult }) {
   const { completeExercise } = useProgress();
-  const [showHint, setShowHint] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
 
   useEffect(() => {
@@ -23,49 +24,45 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, currentResult
     } else {
       setEvaluation(null);
     }
-  }, [currentResult, exercise]);
+  }, [currentResult, exercise, completeExercise]);
 
   if (!exercise) return null;
 
   return (
     <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Header del Desafío */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-amber)' }}>
           <Target size={20} />
           <h3 style={{ fontSize: '1.1rem', color: '#ffffff', margin: 0 }}>
             {exercise.title}
           </h3>
         </div>
-        <span className="badge badge-amber">Desafío Práctico</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          {exercise.category && (
+            <span className="badge badge-indigo">{exercise.category}</span>
+          )}
+          <span className="badge badge-amber">Desafío Práctico</span>
+        </div>
       </div>
 
-      {/* Consigna / Prompt */}
-      <p style={{ color: 'var(--text-primary)', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>
+      {/* Caso de Negocio / Contexto si existe */}
+      {exercise.businessCase && (
+        <div style={{ background: 'rgba(99, 102, 241, 0.08)', border: '1px solid var(--accent-indigo-glow)', borderRadius: 'var(--radius-sm)', padding: '0.6rem 0.8rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+          <Building size={16} color="var(--accent-indigo)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.4 }}>
+            <strong style={{ color: 'var(--accent-cyan)' }}>{exercise.businessCase.department}:</strong> {exercise.businessCase.scenario}
+          </div>
+        </div>
+      )}
+
+      {/* Consigna / Prompt Principal */}
+      <p style={{ color: 'var(--text-primary)', fontSize: '0.94rem', margin: 0, lineHeight: 1.6 }}>
         {exercise.prompt}
       </p>
 
-      {/* Pistas Escalonadas */}
-      {exercise.hints && exercise.hints.length > 0 && (
-        <div>
-          <button
-            onClick={() => setShowHint(!showHint)}
-            className="btn-glass"
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: 'var(--accent-amber)' }}
-          >
-            <Lightbulb size={14} />
-            {showHint ? 'Ocultar Pista' : '¿Necesitas una Pista?'}
-          </button>
-
-          {showHint && (
-            <ul style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid var(--accent-amber-glow)', borderRadius: 'var(--radius-sm)', padding: '0.75rem 1rem 0.75rem 2.2rem', marginTop: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              {exercise.hints.map((h, i) => (
-                <li key={i} style={{ marginBottom: '0.25rem' }}>{h}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      {/* Sistema de Pistas Escalonadas Multinivel */}
+      <TieredHintsPanel hints={exercise.hints} />
 
       {/* Feedback de Evaluación de la Respuesta */}
       {evaluation && (

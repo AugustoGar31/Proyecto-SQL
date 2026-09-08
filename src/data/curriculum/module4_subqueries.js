@@ -8,6 +8,7 @@ export const MODULE_4_SUBQUERIES = {
   title: '4. Subconsultas y Expresiones CTE (WITH)',
   description: 'Estructura consultas complejas mediante subconsultas escalares, correlacionadas y CTEs legibles.',
   icon: 'Layers',
+  categoryCode: 'DQL',
   lessons: [
     {
       id: 'les-cte-with',
@@ -36,15 +37,41 @@ JOIN MejoresClientes mc ON c.id_cliente = mc.id_cliente;
         {
           id: 'ex-cte-1',
           title: 'Identificar Clientes VIP con CTE',
+          category: 'DQL',
           prompt: 'Utiliza una CTE llamada "ClientesVIP" que seleccione id_cliente y la suma de sus pedidos como "total", e iguala con la tabla clientes para retornar el nombre y total.',
-          initialCode: 'WITH ClientesVIP AS (\n  SELECT id_cliente, SUM(monto_total) AS total FROM pedidos GROUP BY id_cliente\n)\nSELECT c.nombre, cv.total FROM clientes c JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;',
+          initialCode: `-- Escribe tu consulta aquí
+WITH ClientesVIP AS (
+  SELECT id_cliente, SUM(monto_total) AS total
+  FROM pedidos
+  GROUP BY id_cliente
+)
+SELECT c.nombre, cv.total
+FROM clientes c
+JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;`,
           expectedQuery: 'WITH ClientesVIP AS (SELECT id_cliente, SUM(monto_total) AS total FROM pedidos GROUP BY id_cliente) SELECT c.nombre, cv.total FROM clientes c JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;',
           hints: [
-            'Define la CTE con la sintaxis: WITH ClientesVIP AS (...)'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Define la CTE con la sintaxis: WITH ClientesVIP AS (...)'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'WITH ClientesVIP AS (\n  SELECT id_cliente, SUM(monto_total) AS total FROM pedidos GROUP BY id_cliente\n)\nSELECT c.nombre, cv.total FROM clientes c JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'La CTE descompone la lógica en pasos modulares legibles y materializables en memoria.'
+            }
           ],
           explanation: {
-            theory: 'La CTE descompone la lógica en pasos modulares legibles.',
-            underTheHood: '⚡ **Bajo el Capó:** El motor crea un result-set efímero en la memoria de trabajo de la sesión.'
+            concept: 'La CTE descompone la lógica en pasos modulares legibles.',
+            underTheHood: '⚡ Bajo el Capó: El motor crea un result-set efímero en la memoria de trabajo de la sesión.'
           }
         }
       ]

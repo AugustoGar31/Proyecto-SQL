@@ -8,6 +8,7 @@ export const MODULE_3_JOINS = {
   title: '3. Consultas Multitabla (JOINs & Relaciones)',
   description: 'Conecta múltiples entidades relacionales mediante Foreign Keys (INNER, LEFT, RIGHT, FULL OUTER).',
   icon: 'GitMerge',
+  categoryCode: 'DQL',
   lessons: [
     {
       id: 'les-joins-basics',
@@ -38,15 +39,37 @@ INNER JOIN cursos c ON i.id_curso = c.id_curso;
         {
           id: 'ex-join-1',
           title: 'Reporte Completo de Inscripciones',
+          category: 'DQL',
           prompt: 'Genera un reporte con el nombre del estudiante (alias "estudiante"), nombre del curso (alias "curso") y nota final (alias "nota").',
-          initialCode: 'SELECT ...\nFROM estudiantes e\nJOIN inscripciones i ON ...\nJOIN cursos c ON ...;',
+          initialCode: `-- Escribe tu consulta aquí
+SELECT e.nombre AS estudiante, c.nombre_curso AS curso, i.nota_final AS nota
+FROM estudiantes e
+JOIN inscripciones i ON e.id_estudiante = i.id_estudiante
+JOIN cursos c ON i.id_curso = c.id_curso;`,
           expectedQuery: 'SELECT e.nombre AS estudiante, c.nombre_curso AS curso, i.nota_final AS nota FROM estudiantes e JOIN inscripciones i ON e.id_estudiante = i.id_estudiante JOIN cursos c ON i.id_curso = c.id_curso;',
           hints: [
-            'Relaciona e.id_estudiante = i.id_estudiante e i.id_curso = c.id_curso.'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Relaciona e.id_estudiante = i.id_estudiante e i.id_curso = c.id_curso.'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'SELECT e.nombre AS estudiante, c.nombre_curso AS curso, i.nota_final AS nota\nFROM estudiantes e\nJOIN inscripciones i ON e.id_estudiante = i.id_estudiante\nJOIN cursos c ON i.id_curso = c.id_curso;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'El doble JOIN resuelve la relación M:N entre estudiantes y cursos.'
+            }
           ],
           explanation: {
-            theory: 'El doble JOIN resuelve la relación M:N entre estudiantes y cursos.',
-            underTheHood: '⚡ **Bajo el Capó:** Se consulta primero la tabla intermedia y se realizan búsquedas por clave primaria (Index Unique Scan).'
+            concept: 'El doble JOIN resuelve la relación M:N entre estudiantes y cursos.',
+            underTheHood: '⚡ Bajo el Capó: Se consulta primero la tabla intermedia y se realizan búsquedas por clave primaria (Index Unique Scan).'
           }
         }
       ]

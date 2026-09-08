@@ -8,6 +8,7 @@ export const MODULE_1_DQL = {
   title: '1. Fundamentos DQL (Data Query Language)',
   description: 'Aprende a consultar la base de datos, proyectar columnas y aplicar filtros lógicos avanzados.',
   icon: 'Search',
+  categoryCode: 'DQL',
   lessons: [
     {
       id: 'les-select-basics',
@@ -44,17 +45,36 @@ WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;
         {
           id: 'ex-dql-1',
           title: 'Filtrar Estudiantes Prominentes',
+          category: 'DQL',
           prompt: 'Selecciona el nombre y el promedio de los estudiantes de "Ingeniería en Sistemas" con un promedio mayor o igual a 8.5.',
-          initialCode: '-- Escribe tu consulta SQL aquí\nSELECT ... FROM estudiantes WHERE ...;',
+          initialCode: `-- Escribe tu consulta aquí
+SELECT nombre, promedio
+FROM estudiantes
+WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;`,
           expectedQuery: "SELECT nombre, promedio FROM estudiantes WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;",
           hints: [
-            'Proyecta únicamente las columnas "nombre" y "promedio".',
-            'Combina las condiciones de carrera y promedio usando AND.',
-            'Usa comillas simples para la cadena "Ingeniería en Sistemas".'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Proyecta únicamente las columnas "nombre" y "promedio".'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: "SELECT nombre, promedio\nFROM estudiantes\nWHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;"
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'La cláusula WHERE filtra las filas antes de retornar el conjunto final.'
+            }
           ],
           explanation: {
-            theory: 'La cláusula WHERE filtra las filas antes de retornar el conjunto final.',
-            underTheHood: '⚡ **Bajo el Capó:** Si existe un índice compuesto en (carrera, promedio), el motor realiza un Index Range Scan ultra rápido.'
+            concept: 'La cláusula WHERE filtra las filas antes de retornar el conjunto final.',
+            underTheHood: '⚡ Bajo el Capó: Si existe un índice compuesto en (carrera, promedio), el motor realiza un Index Range Scan ultra rápido.'
           }
         }
       ]
@@ -87,15 +107,36 @@ WHERE nota_final IS NOT NULL;
         {
           id: 'ex-dql-2',
           title: 'Filtrar Cursos sin Calificación Completa',
+          category: 'DQL',
           prompt: 'Obtén el id_estudiante y la nota_final de la tabla inscripciones donde la nota_final NO sea NULL.',
-          initialCode: 'SELECT id_estudiante, nota_final FROM inscripciones WHERE ...;',
+          initialCode: `-- Escribe tu consulta aquí
+SELECT id_estudiante, nota_final
+FROM inscripciones
+WHERE nota_final IS NOT NULL;`,
           expectedQuery: 'SELECT id_estudiante, nota_final FROM inscripciones WHERE nota_final IS NOT NULL;',
           hints: [
-            'Utiliza el operador IS NOT NULL en el predicado WHERE.'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Utiliza el operador IS NOT NULL en el predicado WHERE.'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'SELECT id_estudiante, nota_final\nFROM inscripciones\nWHERE nota_final IS NOT NULL;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'IS NOT NULL ignora los registros pendientes de calificación.'
+            }
           ],
           explanation: {
-            theory: 'IS NOT NULL ignora los registros pendientes de calificación.',
-            underTheHood: '⚡ **Bajo el Capó:** Los motores excluyen entradas NULL de ciertos tipos de índices B-Tree, optimizando el escaneo.'
+            concept: 'IS NOT NULL ignora los registros pendientes de calificación.',
+            underTheHood: '⚡ Bajo el Capó: Los motores excluyen entradas NULL de ciertos tipos de índices B-Tree, optimizando el escaneo.'
           }
         }
       ]

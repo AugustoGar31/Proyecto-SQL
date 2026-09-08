@@ -8,6 +8,7 @@ export const MODULE_7_DDL = {
   title: '7. Definición de Esquemas (DDL)',
   description: 'Diseña y crea tablas relacionales, define tipos de datos y establece restricciones de integridad (PRIMARY KEY, FOREIGN KEY, CHECK).',
   icon: 'Database',
+  categoryCode: 'DDL',
   lessons: [
     {
       id: 'les-ddl-create-table',
@@ -32,15 +33,38 @@ CREATE TABLE departamentos (
         {
           id: 'ex-ddl-1',
           title: 'Crear Tabla de Departamentos',
-          prompt: 'Crea una tabla llamada "departamentos" con id_departamento (INTEGER PRIMARY KEY), nombre (TEXT NOT NULL) y presupuesto (REAL).',
-          initialCode: 'CREATE TABLE departamentos (\n  id_departamento INTEGER PRIMARY KEY,\n  nombre TEXT NOT NULL,\n  presupuesto REAL\n);',
-          expectedQuery: 'CREATE TABLE departamentos (id_departamento INTEGER PRIMARY KEY, nombre TEXT NOT NULL, presupuesto REAL);',
+          category: 'DDL',
+          prompt: 'Crea una tabla llamada "departamentos_nuevos" con id_departamento (INTEGER PRIMARY KEY), nombre (TEXT NOT NULL) y presupuesto (REAL).',
+          initialCode: `-- Escribe tu sentencia DDL aquí
+CREATE TABLE departamentos_nuevos (
+  id_departamento INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  presupuesto REAL
+);`,
+          expectedQuery: 'CREATE TABLE departamentos_nuevos (id_departamento INTEGER PRIMARY KEY, nombre TEXT NOT NULL, presupuesto REAL);',
           hints: [
-            'Usa la instrucción CREATE TABLE departamentos (...)'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Usa la instrucción CREATE TABLE departamentos_nuevos (...)'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'CREATE TABLE departamentos_nuevos (\n  id_departamento INTEGER PRIMARY KEY,\n  nombre TEXT NOT NULL,\n  presupuesto REAL\n);'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'DDL modifica el catálogo de metadatos del motor registrando la nueva tabla en sqlite_master.'
+            }
           ],
           explanation: {
-            theory: 'DDL modifica el catálogo de metadatos del motor.',
-            underTheHood: '⚡ **Bajo el Capó:** Se inserta una nueva fila de definición en la tabla del sistema sqlite_master.'
+            concept: 'DDL modifica el catálogo de metadatos del motor.',
+            underTheHood: '⚡ Bajo el Capó: Se inserta una nueva fila de definición en la tabla del sistema sqlite_master.'
           }
         }
       ]

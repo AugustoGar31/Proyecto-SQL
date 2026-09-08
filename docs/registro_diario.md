@@ -37,3 +37,12 @@
 - **Botón Inicio**: Acceso al Onboarding integrado en el Navbar a la izquierda de "Taller SQL".
 - **Modal Bento Box & Carrusel**: Modal glassmórfico de inicio con cuadrícula Bento, carrusel interactivo de 3 slides y tarjeta de progreso del estudiante.
 - **Optimización Web**: Code-Splitting con `React.lazy`, memoización del contexto/árbol de renderizado y aceleración por GPU (60fps) en Glassmorfismo y Mapa Mental.
+
+## 📌 31 de Agosto, 2026
+
+- **Actualizacion de Favicon**: Cambio de Favicon por el mismo en PNG.
+
+## 📌 1 de Septiembre, 2026
+
+- **Arquitectura de Libretos y Módulo Cero**: Diseño de las 4 fases de actualización (Sidebar de progresión bloqueada, sistema de 3 pistas escalonadas y +50 Katas basadas en casos de negocio).
+- **Procesamiento de Documentos**: Extracción y diseño del índice de Katas a partir de los TPs universitarios (Universidad, Pedidos, Finanzas).

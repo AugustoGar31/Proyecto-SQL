@@ -8,6 +8,7 @@ export const MODULE_10_TRANSACTIONS = {
   title: '10. Transacciones & Propiedades ACID',
   description: 'Domina las unidades atómicas de trabajo (BEGIN, COMMIT, ROLLBACK), durabilidad WAL y niveles de aislamiento.',
   icon: 'ShieldCheck',
+  categoryCode: 'TCL',
   lessons: [
     {
       id: 'les-acid',
@@ -31,15 +32,37 @@ COMMIT;
         {
           id: 'ex-tx-1',
           title: 'Simulación de Transferencia Bancaria Atómica',
+          category: 'TCL',
           prompt: 'Inicia una transacción (BEGIN TRANSACTION;), descuenta 500 de la id_cuenta = 1, acredita 500 a la id_cuenta = 3 y confirma con COMMIT;.',
-          initialCode: 'BEGIN TRANSACTION;\nUPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1;\nUPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3;\nCOMMIT;',
+          initialCode: `-- Escribe tu bloque transaccional aquí
+BEGIN TRANSACTION;
+UPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1;
+UPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3;
+COMMIT;`,
           expectedQuery: 'BEGIN TRANSACTION; UPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1; UPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3; COMMIT;',
           hints: [
-            'Agrupa las tres instrucciones terminando con COMMIT;'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Agrupa las sentencias DML entre BEGIN TRANSACTION; y COMMIT;.'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'BEGIN TRANSACTION;\nUPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1;\nUPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3;\nCOMMIT;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'La transacción consolida ambos UPDATEs en un cambio atómico garantizado por el registro WAL.'
+            }
           ],
           explanation: {
-            theory: 'La transacción consolida ambos UPDATEs en un cambio atómico.',
-            underTheHood: '⚡ **Bajo el Capó:** Las escrituras ocurren en el registro Write-Ahead Logging (WAL) antes de reflejarse en las páginas principales.'
+            concept: 'La transacción consolida ambos UPDATEs en un cambio atómico.',
+            underTheHood: '⚡ Bajo el Capó: Las escrituras ocurren en el registro Write-Ahead Logging (WAL) antes de reflejarse en las páginas de datos principales.'
           }
         }
       ]

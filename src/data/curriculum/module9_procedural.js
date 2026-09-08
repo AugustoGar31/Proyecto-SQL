@@ -8,6 +8,7 @@ export const MODULE_9_PROCEDURAL = {
   title: '9. SQL Procedural & Triggers',
   description: 'Automatiza lógica de negocio en la base de datos con disparadores (Triggers) ante eventos INSERT, UPDATE y DELETE.',
   icon: 'Cpu',
+  categoryCode: 'PROCEDURAL',
   lessons: [
     {
       id: 'les-triggers',
@@ -34,15 +35,40 @@ END;
         {
           id: 'ex-trig-1',
           title: 'Crear Trigger de Auditoría de Inventario',
-          prompt: 'Crea un Trigger "trg_auditoria_inventario" ejecutado AFTER UPDATE OF stock ON productos FOR EACH ROW que inserte en auditoria_stock (id_producto, stock_anterior, stock_nuevo) los valores OLD e NEW.',
-          initialCode: 'CREATE TRIGGER trg_auditoria_inventario\nAFTER UPDATE OF stock ON productos\nFOR EACH ROW\nBEGIN\n  INSERT INTO ...\nEND;',
+          category: 'PROCEDURAL',
+          prompt: 'Crea un Trigger "trg_auditoria_inventario" ejecutado AFTER UPDATE OF stock ON productos FOR EACH ROW que inserte en auditoria_stock (id_producto, stock_anterior, stock_nuevo) los valores OLD y NEW.',
+          initialCode: `-- Escribe tu sentencia DDL/Trigger aquí
+CREATE TRIGGER trg_auditoria_inventario
+AFTER UPDATE OF stock ON productos
+FOR EACH ROW
+BEGIN
+  INSERT INTO auditoria_stock (id_producto, stock_anterior, stock_nuevo)
+  VALUES (OLD.id_producto, OLD.stock, NEW.stock);
+END;`,
           expectedQuery: 'CREATE TRIGGER trg_auditoria_inventario AFTER UPDATE OF stock ON productos FOR EACH ROW BEGIN INSERT INTO auditoria_stock (id_producto, stock_anterior, stock_nuevo) VALUES (OLD.id_producto, OLD.stock, NEW.stock); END;',
           hints: [
-            'Usa OLD.stock y NEW.stock dentro del bloque BEGIN ... END.'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Usa OLD.stock y NEW.stock dentro del bloque BEGIN ... END;'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'CREATE TRIGGER trg_auditoria_inventario\nAFTER UPDATE OF stock ON productos\nFOR EACH ROW\nBEGIN\n  INSERT INTO auditoria_stock (id_producto, stock_anterior, stock_nuevo)\n  VALUES (OLD.id_producto, OLD.stock, NEW.stock);\nEND;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'Un trigger registra un hook automático en el catálogo ejecutado sincrónicamente ante cada fila modificada.'
+            }
           ],
           explanation: {
-            theory: 'Un trigger registra un hook automático en el catálogo.',
-            underTheHood: '⚡ **Bajo el Capó:** La transacción original del UPDATE no se confirma hasta que el Trigger completa síncronamente su inserción.'
+            concept: 'Un trigger registra un hook automático en el catálogo.',
+            underTheHood: '⚡ Bajo el Capó: La transacción original del UPDATE no se confirma hasta que el Trigger completa síncronamente su inserción.'
           }
         }
       ]

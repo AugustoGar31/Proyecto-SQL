@@ -8,6 +8,7 @@ export const MODULE_8_INDEXES = {
   title: '8. Arquitectura B-Tree, Índices y Performance',
   description: 'Comprende el funcionamiento de los índices B-Tree, reduce la complejidad de $O(N)$ a $O(\\log N)$ y analiza el Query Optimizer.',
   icon: 'Zap',
+  categoryCode: 'DDL',
   lessons: [
     {
       id: 'les-b-tree-indexes',
@@ -21,22 +22,41 @@ Los índices no son "gratis": aceleran las lecturas (\`SELECT\`) pero penalizan 
       `,
       contentMarkdown: `
 \`\`\`sql
-CREATE INDEX idx_estudiantes_carrera ON estudiantes(carrera);
+CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);
 \`\`\`
       `,
       exercises: [
         {
           id: 'ex-idx-1',
-          title: 'Crear Índice de Búsqueda por Carrera',
-          prompt: 'Crea un índice llamado "idx_estudiantes_carrera" sobre la columna "carrera" de la tabla "estudiantes".',
-          initialCode: 'CREATE INDEX idx_estudiantes_carrera ON ...(...);',
-          expectedQuery: 'CREATE INDEX idx_estudiantes_carrera ON estudiantes(carrera);',
+          title: 'Crear Índice de Búsqueda por Apellido',
+          category: 'DDL',
+          prompt: 'Crea un índice llamado "idx_alumnos_apellido" sobre la columna "apellido" de la tabla "alumnos".',
+          initialCode: `-- Escribe tu sentencia DDL aquí
+CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);`,
+          expectedQuery: 'CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);',
           hints: [
-            'Usa la sintaxis: CREATE INDEX idx_estudiantes_carrera ON estudiantes(carrera);'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Usa la sintaxis: CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'Un índice genera una estructura B-Tree ordenada de claves apuntando a los punteros de fila.'
+            }
           ],
           explanation: {
-            theory: 'Un índice genera una estructura B-Tree ordenada de claves apuntando a los punteros de fila.',
-            underTheHood: '⚡ **Bajo el Capó:** Las búsquedas pasan de recorrer N páginas a navegar $\\log_B(N)$ niveles de profundidad en el árbol.'
+            concept: 'Un índice genera una estructura B-Tree ordenada de claves apuntando a los punteros de fila.',
+            underTheHood: '⚡ Bajo el Capó: Las búsquedas pasan de recorrer N páginas a navegar niveles de profundidad logarítmicos en el árbol.'
           }
         }
       ]

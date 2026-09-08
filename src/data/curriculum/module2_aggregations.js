@@ -8,6 +8,7 @@ export const MODULE_2_AGGREGATIONS = {
   title: '2. Agregación y Análisis de Datos (GROUP BY & HAVING)',
   description: 'Agrupa conjuntos de datos, calcula métricas estadísticas (SUM, AVG, COUNT) y aplica filtros condicionales post-agregación.',
   icon: 'BarChart2',
+  categoryCode: 'DQL',
   lessons: [
     {
       id: 'les-group-by',
@@ -37,16 +38,37 @@ HAVING AVG(promedio) > 8.0;
         {
           id: 'ex-dql-agg-1',
           title: 'Promedio por Carrera Académica',
+          category: 'DQL',
           prompt: 'Obtén la carrera y el promedio general de sus alumnos (alias "promedio_carrera"), agrupados por carrera, mostrando solo aquellas con promedio superior a 8.0.',
-          initialCode: 'SELECT carrera, AVG(promedio) AS promedio_carrera\nFROM estudiantes\nGROUP BY ...\nHAVING ...;',
+          initialCode: `-- Escribe tu consulta aquí
+SELECT carrera, AVG(promedio) AS promedio_carrera
+FROM estudiantes
+GROUP BY carrera
+HAVING AVG(promedio) > 8.0;`,
           expectedQuery: 'SELECT carrera, AVG(promedio) AS promedio_carrera FROM estudiantes GROUP BY carrera HAVING AVG(promedio) > 8.0;',
           hints: [
-            'Agrupa por la columna carrera con GROUP BY.',
-            'Aplica HAVING AVG(promedio) > 8.0.'
+            {
+              level: 1,
+              type: 'conceptual',
+              title: 'Pista Conceptual',
+              content: 'Agrupa por la columna carrera con GROUP BY.'
+            },
+            {
+              level: 2,
+              type: 'syntax_skeleton',
+              title: 'Esqueleto Sintáctico',
+              content: 'SELECT carrera, AVG(promedio) AS promedio_carrera\nFROM estudiantes\nGROUP BY carrera\nHAVING AVG(promedio) > 8.0;'
+            },
+            {
+              level: 3,
+              type: 'solution_breakdown',
+              title: 'Explicación de la Solución',
+              content: 'HAVING filtra únicamente después de realizar la reducción por grupos.'
+            }
           ],
           explanation: {
-            theory: 'HAVING filtra únicamente después de realizar la reducción por grupos.',
-            underTheHood: '⚡ **Bajo el Capó:** La BD utiliza una tabla hash en memoria donde las claves son las categorías de carrera.'
+            concept: 'HAVING filtra únicamente después de realizar la reducción por grupos.',
+            underTheHood: '⚡ Bajo el Capó: La BD utiliza una tabla hash en memoria donde las claves son las categorías de carrera.'
           }
         }
       ]
