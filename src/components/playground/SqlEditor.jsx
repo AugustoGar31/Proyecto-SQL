@@ -6,15 +6,17 @@
 
 import React, { memo } from 'react';
 import { Play, RotateCcw, Copy, Check } from 'lucide-react';
+import { Button } from '../common/Button.jsx';
 
-export const STRICT_SQL_TEMPLATE = `-- Escribe tu consulta SQL aquí\nSELECT `;
+export const STRICT_SQL_TEMPLATE = `-- Escribe tu consulta aquí\nSELECT `;
+export const FIXED_SQL_TEMPLATE = STRICT_SQL_TEMPLATE;
 
 export const SqlEditor = memo(function SqlEditor({
-  value = STRICT_SQL_TEMPLATE,
+  value = FIXED_SQL_TEMPLATE,
   onChange,
   onExecute,
   onReset,
-  placeholder = STRICT_SQL_TEMPLATE
+  placeholder = FIXED_SQL_TEMPLATE
 }) {
   const [internalCode, setInternalCode] = React.useState(value);
   const [copied, setCopied] = React.useState(false);
@@ -62,34 +64,39 @@ export const SqlEditor = memo(function SqlEditor({
   };
 
   return (
-    <div className="glass-card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Barra de Herramientas del Editor */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
-        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent-cyan)', fontFamily: 'var(--font-code)' }}>
-          💻 Editor SQL
-        </span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.65rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--accent-cyan)', fontFamily: 'var(--font-code)' }}>
+            💻 Editor SQL
+          </span>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            (Ctrl + Enter para ejecutar)
+          </span>
+        </div>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
+        <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleCopy}
-            className="btn-glass"
-            style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
-            title="Copiar código"
-            type="button"
+            title="Copiar código al portapapeles"
+            icon={copied ? Check : Copy}
           >
-            {copied ? <Check size={14} color="var(--accent-emerald)" /> : <Copy size={14} />}
-          </button>
+            {copied ? 'Copiado' : 'Copiar'}
+          </Button>
           
           {onReset && (
-            <button
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleReset}
-              className="btn-glass"
-              style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
-              title="Restablecer plantilla inicial"
-              type="button"
+              title="Restablecer plantilla inicial (Acción destructiva)"
+              icon={RotateCcw}
             >
-              <RotateCcw size={14} />
-            </button>
+              Reset
+            </Button>
           )}
         </div>
       </div>
@@ -107,19 +114,24 @@ export const SqlEditor = memo(function SqlEditor({
           width: '100%',
           fontFamily: 'var(--font-code)',
           fontSize: '0.92rem',
-          lineHeight: '1.5',
+          lineHeight: '1.55',
           resize: 'vertical',
           color: '#ffffff',
-          tabSize: 2
+          tabSize: 2,
+          padding: '0.85rem'
         }}
       />
 
-      {/* Botón Principal de Ejecución */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={handleExecute} className="btn-primary" type="button">
-          <Play size={16} fill="currentColor" />
+      {/* Botón Principal de Ejecución: Primary CTA Único */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.25rem' }}>
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={handleExecute}
+          icon={Play}
+        >
           Ejecutar Consulta
-        </button>
+        </Button>
       </div>
     </div>
   );

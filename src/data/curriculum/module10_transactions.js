@@ -34,11 +34,7 @@ COMMIT;
           title: 'Simulación de Transferencia Bancaria Atómica',
           category: 'TCL',
           prompt: 'Inicia una transacción (BEGIN TRANSACTION;), descuenta 500 de la id_cuenta = 1, acredita 500 a la id_cuenta = 3 y confirma con COMMIT;.',
-          initialCode: `-- Escribe tu bloque transaccional aquí
-BEGIN TRANSACTION;
-UPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1;
-UPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3;
-COMMIT;`,
+          initialCode: `-- Escribe tu bloque transaccional aquí\nBEGIN TRANSACTION;\n`,
           expectedQuery: 'BEGIN TRANSACTION; UPDATE cuentas_bancarias SET saldo = saldo - 500 WHERE id_cuenta = 1; UPDATE cuentas_bancarias SET saldo = saldo + 500 WHERE id_cuenta = 3; COMMIT;',
           hints: [
             {
@@ -57,12 +53,12 @@ COMMIT;`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'La transacción consolida ambos UPDATEs en un cambio atómico garantizado por el registro WAL.'
+              content: 'La transacción consolida ambos UPDATEs en un cambio atómico que asegura integridad.'
             }
           ],
           explanation: {
-            concept: 'La transacción consolida ambos UPDATEs en un cambio atómico.',
-            underTheHood: '⚡ Bajo el Capó: Las escrituras ocurren en el registro Write-Ahead Logging (WAL) antes de reflejarse en las páginas de datos principales.'
+            concept: 'Una TRANSACCIÓN es como una red de seguridad: te permite hacer varios cambios en paquete. Si todo sale bien, hacés COMMIT para guardar todo; si algo falla en el camino, hacés ROLLBACK (deshacer) y la base de datos vuelve a quedar exactamente como antes, sin romper nada.',
+            tip: 'Es fundamental en operaciones bancarias: si te cobran el dinero pero el depósito en la otra cuenta falla, la transacción se cancela y no se pierde ningún saldo.'
           }
         }
       ]

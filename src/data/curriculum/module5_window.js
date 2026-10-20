@@ -33,10 +33,7 @@ FROM estudiantes;
           title: 'Ranking de Estudiantes por Carrera',
           category: 'DQL',
           prompt: 'Obtén nombre, carrera, promedio y asigna un ranking por carrera usando ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) con el alias "ranking".',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT nombre, carrera, promedio,
-       ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) AS ranking
-FROM estudiantes;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT nombre, carrera, promedio, ROW_NUMBER() OVER(PARTITION BY carrera ORDER BY promedio DESC) AS ranking FROM estudiantes;',
           hints: [
             {
@@ -59,8 +56,8 @@ FROM estudiantes;`,
             }
           ],
           explanation: {
-            concept: 'PARTITION BY divide el conjunto en sub-ventanas independientes por carrera.',
-            underTheHood: '⚡ Bajo el Capó: El motor aplica un Window Aggregate Operator sobre los datos previamente ordenados por el buffer.'
+            concept: 'Una función de ventana (OVER + PARTITION BY) numera o rankea las filas dentro de cada grupito (como calcular el mejor promedio dentro de cada carrera) sin reducir las filas a una sola.',
+            tip: 'A diferencia de GROUP BY que achica la tabla a un solo resumen, las funciones de ventana conservan cada fila intacta y le agregan su número de ranking al lado.'
           }
         }
       ]

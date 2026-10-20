@@ -5,7 +5,7 @@ import { useProgress } from './ProgressContext.jsx';
 const DbEngineContext = createContext();
 
 export const DbEngineProvider = ({ children }) => {
-  const { currentLesson } = useProgress();
+  const { currentLesson, activeExercise } = useProgress();
   const [isReady, setIsReady] = useState(false);
   const [initError, setInitError] = useState(null);
   const [currentSchemaId, setCurrentSchemaId] = useState(null);
@@ -22,8 +22,8 @@ export const DbEngineProvider = ({ children }) => {
         // 1. Inicialización asíncrona de WASM sql.js
         await sqlEngine.initEngine();
 
-        // 2. Determinar esquema objetivo (lección activa o fallback 'universidad')
-        const targetSchema = (currentLesson && currentLesson.schemaId) ? currentLesson.schemaId : 'universidad';
+        // 2. Determinar esquema objetivo (ejercicio activo, lección activa o fallback 'universidad')
+        const targetSchema = (activeExercise && activeExercise.schemaId) || (currentLesson && currentLesson.schemaId) || 'universidad';
 
         // 3. Ejecutar Seeding de datos inmediato (CREATE TABLE + INSERTs)
         sqlEngine.seedDatabase(targetSchema);
@@ -45,17 +45,18 @@ export const DbEngineProvider = ({ children }) => {
     return () => { isMounted = false; };
   }, []);
 
-  // Cambio dinámico de esquema relacional cuando cambia la lección activa
+  // Cambio dinámico de esquema relacional cuando cambia el ejercicio activo o la lección
   useEffect(() => {
-    if (isReady && currentLesson && currentLesson.schemaId && currentLesson.schemaId !== currentSchemaId) {
+    const targetSchema = (activeExercise && activeExercise.schemaId) || (currentLesson && currentLesson.schemaId);
+    if (isReady && targetSchema && targetSchema !== currentSchemaId) {
       try {
-        sqlEngine.loadSchema(currentLesson.schemaId);
-        setCurrentSchemaId(currentLesson.schemaId);
+        sqlEngine.loadSchema(targetSchema);
+        setCurrentSchemaId(targetSchema);
       } catch (error) {
         console.error('Error al cambiar esquema de BD:', error);
       }
     }
-  }, [isReady, currentLesson, currentSchemaId]);
+  }, [isReady, currentLesson, activeExercise, currentSchemaId]);
 
   /**
    * Reintenta la inicialización completa del motor SQL y el seeding de datos.

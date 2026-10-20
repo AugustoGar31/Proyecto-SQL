@@ -1,7 +1,6 @@
 /**
  * @file universidad.js
- * @description Esquema de datos completo para el dominio Académico (Universidad)
- * basado en los Trabajos Prácticos universitarios (TP3, TP4, TP5).
+ * @description Esquema de datos para el dominio Institucional y Académico de NexoSQL.
  */
 
 export const SCHEMA_UNIVERSIDAD = {
@@ -127,15 +126,20 @@ export const SCHEMA_UNIVERSIDAD = {
       FOREIGN KEY (id_aula) REFERENCES aulas(id_aula)
     );
 
-    -- 10. Inscripciones a Comisiones
+    -- 10. Inscripciones a Comisiones y Cursos (Modelo relacional institucional)
     CREATE TABLE inscripciones (
       id_inscripcion INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_alumno INTEGER NOT NULL,
-      id_comision INTEGER NOT NULL,
+      id_alumno INTEGER,
+      id_comision INTEGER,
       fecha_inscripcion DATE NOT NULL,
       estado TEXT NOT NULL, -- 'Cursa' | 'Aprobada' | 'Regular' | 'Baja'
+      id_estudiante INTEGER,
+      id_curso INTEGER,
+      nota_final REAL,
       FOREIGN KEY (id_alumno) REFERENCES alumnos(id_alumno),
-      FOREIGN KEY (id_comision) REFERENCES comisiones(id_comision)
+      FOREIGN KEY (id_comision) REFERENCES comisiones(id_comision),
+      FOREIGN KEY (id_estudiante) REFERENCES estudiantes(id_estudiante),
+      FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
     );
 
     -- 11. Exámenes
@@ -298,18 +302,18 @@ export const SCHEMA_UNIVERSIDAD = {
     (7, 6, 4, 4, 2024, 2, 45, 'teorica', 'Sab 09:00 - 12:00'),
     (8, 8, 1, 1, 2025, 2, 35, 'practica', 'Mar/Jue 10:00 - 12:00');
 
-    -- Inscripciones a comisiones
-    INSERT INTO inscripciones (id_inscripcion, id_alumno, id_comision, fecha_inscripcion, estado) VALUES
-    (1, 1, 1, '2025-02-15', 'Cursa'),
-    (2, 2, 1, '2025-02-16', 'Cursa'),
-    (3, 3, 1, '2025-02-16', 'Cursa'),
-    (4, 4, 2, '2025-02-18', 'Cursa'),
-    (5, 5, 3, '2025-02-20', 'Cursa'),
-    (6, 6, 4, '2025-02-21', 'Aprobada'),
-    (7, 7, 4, '2025-02-22', 'Cursa'),
-    (8, 1, 3, '2025-02-15', 'Cursa'),
-    (9, 2, 3, '2025-02-16', 'Cursa'),
-    (10, 3, 5, '2025-07-10', 'Cursa');
+    -- Inscripciones a comisiones y cursos
+    INSERT INTO inscripciones (id_inscripcion, id_alumno, id_comision, fecha_inscripcion, estado, id_estudiante, id_curso, nota_final) VALUES
+    (1, 1, 1, '2025-02-15', 'Cursa', 1, 1, 9.5),
+    (2, 2, 1, '2025-02-16', 'Cursa', 2, 1, 8.0),
+    (3, 3, 1, '2025-02-16', 'Cursa', 3, 2, NULL),
+    (4, 4, 2, '2025-02-18', 'Cursa', 4, 2, 7.0),
+    (5, 5, 3, '2025-02-20', 'Cursa', 5, 3, NULL),
+    (6, 6, 4, '2025-02-21', 'Aprobada', 1, 3, 9.0),
+    (7, 7, 4, '2025-02-22', 'Cursa', 2, 4, 8.5),
+    (8, 1, 3, '2025-02-15', 'Cursa', 3, 4, NULL),
+    (9, 2, 3, '2025-02-16', 'Cursa', 4, 1, 6.5),
+    (10, 3, 5, '2025-07-10', 'Cursa', 5, 2, 10.0);
 
     -- Exámenes
     INSERT INTO examenes (id_examen, id_asignatura, id_comision, tipo, fecha) VALUES

@@ -35,12 +35,7 @@ CREATE TABLE departamentos (
           title: 'Crear Tabla de Departamentos',
           category: 'DDL',
           prompt: 'Crea una tabla llamada "departamentos_nuevos" con id_departamento (INTEGER PRIMARY KEY), nombre (TEXT NOT NULL) y presupuesto (REAL).',
-          initialCode: `-- Escribe tu sentencia DDL aquí
-CREATE TABLE departamentos_nuevos (
-  id_departamento INTEGER PRIMARY KEY,
-  nombre TEXT NOT NULL,
-  presupuesto REAL
-);`,
+          initialCode: `-- Escribe tu sentencia DDL aquí\nCREATE TABLE `,
           expectedQuery: 'CREATE TABLE departamentos_nuevos (id_departamento INTEGER PRIMARY KEY, nombre TEXT NOT NULL, presupuesto REAL);',
           hints: [
             {
@@ -59,12 +54,12 @@ CREATE TABLE departamentos_nuevos (
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'DDL modifica el catálogo de metadatos del motor registrando la nueva tabla en sqlite_master.'
+              content: 'DDL define la estructura registrando la nueva tabla en el catálogo del sistema.'
             }
           ],
           explanation: {
-            concept: 'DDL modifica el catálogo de metadatos del motor.',
-            underTheHood: '⚡ Bajo el Capó: Se inserta una nueva fila de definición en la tabla del sistema sqlite_master.'
+            concept: 'El CREATE TABLE es como diseñar un formulario en blanco o una planilla de Excel: le ponés nombre a la tabla y definís qué casilleros (columnas) va a tener y qué tipo de dato acepta cada uno (número, texto, fecha).',
+            tip: 'Asegurate de definir siempre una clave primaria (PRIMARY KEY) para que cada registro tenga un identificador único irrepetible.'
           }
         }
       ]

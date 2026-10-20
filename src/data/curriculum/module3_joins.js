@@ -41,11 +41,7 @@ INNER JOIN cursos c ON i.id_curso = c.id_curso;
           title: 'Reporte Completo de Inscripciones',
           category: 'DQL',
           prompt: 'Genera un reporte con el nombre del estudiante (alias "estudiante"), nombre del curso (alias "curso") y nota final (alias "nota").',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT e.nombre AS estudiante, c.nombre_curso AS curso, i.nota_final AS nota
-FROM estudiantes e
-JOIN inscripciones i ON e.id_estudiante = i.id_estudiante
-JOIN cursos c ON i.id_curso = c.id_curso;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT e.nombre AS estudiante, c.nombre_curso AS curso, i.nota_final AS nota FROM estudiantes e JOIN inscripciones i ON e.id_estudiante = i.id_estudiante JOIN cursos c ON i.id_curso = c.id_curso;',
           hints: [
             {
@@ -64,12 +60,12 @@ JOIN cursos c ON i.id_curso = c.id_curso;`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'El doble JOIN resuelve la relación M:N entre estudiantes y cursos.'
+              content: 'El doble JOIN resuelve la relación entre estudiantes, cursos e inscripciones.'
             }
           ],
           explanation: {
-            concept: 'El doble JOIN resuelve la relación M:N entre estudiantes y cursos.',
-            underTheHood: '⚡ Bajo el Capó: Se consulta primero la tabla intermedia y se realizan búsquedas por clave primaria (Index Unique Scan).'
+            concept: 'El JOIN es como encastrar piezas de un rompecabezas: usa los IDs compartidos para unir estudiantes, sus notas y el nombre del curso en una sola fila.',
+            tip: 'Cada JOIN necesita su cláusula ON indicando qué columna de la tabla A coincide exactamente con la columna de la tabla B.'
           }
         }
       ]

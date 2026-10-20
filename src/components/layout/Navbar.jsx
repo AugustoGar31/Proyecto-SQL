@@ -4,8 +4,8 @@
  */
 
 import React from 'react';
-import { Database, Trophy, Sparkles } from 'lucide-react';
-import { ViewSelector } from '../navigation/ViewSelector.jsx';
+import { Trophy } from 'lucide-react';
+import { ViewSelector } from './ViewSelector.jsx';
 import { useProgress } from '../../context/ProgressContext.jsx';
 
 export function Navbar() {
@@ -20,9 +20,9 @@ export function Navbar() {
             <img src="/navbar-logo.png" alt="NexoSQL Database Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
           </div>
           <div>
-            <span style={{ color: '#ffffff' }}>Nexo</span>
-            <span style={{ color: 'var(--accent-cyan)' }}>SQL</span>
-            <span style={{ fontSize: '0.65rem', display: 'block', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '1px' }}>
+            <span style={{ color: '#ffffff', fontWeight: 800 }}>Nexo</span>
+            <span style={{ color: 'var(--accent-cyan)', fontWeight: 800 }}>SQL</span>
+            <span style={{ fontSize: '0.72rem', display: 'block', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '0.5px' }}>
               QueryMaster Academy
             </span>
           </div>

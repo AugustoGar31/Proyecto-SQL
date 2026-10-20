@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useView } from '../../context/ViewContext.jsx';
 import { useProgress } from '../../context/ProgressContext.jsx';
+import { Button } from '../common/Button.jsx';
 
 export function HomeOnboardingModal() {
   const { isHomeModalOpen, closeHomeModal, setActiveView } = useView();
@@ -212,29 +213,30 @@ export function HomeOnboardingModal() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.85rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img src="/navbar-logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '1.25rem', color: '#ffffff', margin: 0, fontWeight: 700 }}>
+                  <h2 style={{ fontSize: '1.35rem', color: '#ffffff', margin: 0, fontWeight: 700 }}>
                     Centro de Inicio <span style={{ color: 'var(--accent-cyan)', fontSize: '0.9rem', fontWeight: 500 }}>• Onboarding</span>
                   </h2>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     Guía de la plataforma & Estado de tu aprendizaje
                   </span>
                 </div>
               </div>
 
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={closeHomeModal}
-                className="btn-glass"
-                style={{ padding: '0.4rem 0.7rem', borderRadius: 'var(--radius-sm)' }}
-                title="Cerrar (Esc)"
+                title="Cerrar modal (Esc)"
+                style={{ padding: '0.45rem', borderRadius: 'var(--radius-sm)' }}
               >
                 <X size={18} />
-              </button>
+              </Button>
             </div>
 
             {/* Cuadrícula Bento Box */}
@@ -310,10 +312,10 @@ export function HomeOnboardingModal() {
                       exit={{ opacity: 0, x: -12 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <h3 style={{ fontSize: '1.25rem', color: '#ffffff', fontWeight: 700, margin: '0 0 0.25rem 0' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: '#ffffff', fontWeight: 700, margin: '0 0 0.25rem 0' }}>
                         {current.title}
                       </h3>
-                      <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
+                      <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: 0 }}>
                         {current.subtitle}
                       </p>
                       {current.content}
@@ -322,27 +324,30 @@ export function HomeOnboardingModal() {
                 </div>
 
                 {/* Controles Inferiores del Carrusel */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={handlePrevSlide}
-                      className="btn-glass"
-                      style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
                       title="Slide Anterior"
                     >
                       <ChevronLeft size={16} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={handleNextSlide}
-                      className="btn-glass"
-                      style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
                       title="Siguiente Slide"
                     >
                       <ChevronRight size={16} />
-                    </button>
+                    </Button>
                   </div>
 
-                  <button
+                  {/* CTA Principal único al final del carrusel */}
+                  <Button
+                    variant={activeSlide === slides.length - 1 ? 'primary' : 'secondary'}
+                    size="md"
                     onClick={() => {
                       if (activeSlide < slides.length - 1) {
                         handleNextSlide();
@@ -351,12 +356,11 @@ export function HomeOnboardingModal() {
                         closeHomeModal();
                       }
                     }}
-                    className="btn-primary"
-                    style={{ fontSize: '0.82rem', padding: '0.45rem 1rem' }}
+                    icon={ArrowRight}
+                    iconPosition="right"
                   >
-                    {activeSlide === slides.length - 1 ? '¡Ir al Taller SQL!' : 'Siguiente'}
-                    <ArrowRight size={14} />
-                  </button>
+                    {activeSlide === slides.length - 1 ? 'Comenzar en el Taller SQL' : 'Siguiente'}
+                  </Button>
                 </div>
               </div>
 
@@ -366,27 +370,27 @@ export function HomeOnboardingModal() {
                   gridColumn: 'span 5',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1rem'
+                  gap: '1.25rem'
                 }}
               >
                 {/* BENTO CARD 2: Tarjeta de Progreso Estética */}
                 <div
                   className="glass-card"
                   style={{
-                    padding: '1.25rem',
+                    padding: '1.35rem',
                     background: 'rgba(255, 255, 255, 0.03)',
                     borderColor: 'rgba(255, 255, 255, 0.12)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.85rem'
+                    gap: '1rem'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-emerald)' }}>
                       <Trophy size={18} />
-                      <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>Tu Progreso de Aprendizaje</span>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#ffffff' }}>Tu Progreso de Aprendizaje</span>
                     </div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>
+                    <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>
                       {progressPercentage}%
                     </span>
                   </div>
@@ -405,46 +409,48 @@ export function HomeOnboardingModal() {
                     />
                   </div>
 
-                  {/* Métricas de Lecciones & Desafíos */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.2rem' }}>
-                    <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>Lecciones</span>
-                      <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>{completedCount}</strong>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}> / {totalLessons || 12}</span>
+                  {/* Métricas de Lecciones & Desafíos con espacio en blanco cómodo */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '0.25rem' }}>
+                    <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>Lecciones</span>
+                      <strong style={{ fontSize: '1.05rem', color: '#ffffff' }}>{completedCount}</strong>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}> / {totalLessons || 12}</span>
                     </div>
-                    <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>Katas Resueltas</span>
-                      <strong style={{ fontSize: '0.95rem', color: 'var(--accent-amber)' }}>
+                    <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.2rem' }}>Katas Resueltas</span>
+                      <strong style={{ fontSize: '1.05rem', color: 'var(--accent-amber)' }}>
                         {progress.completedExercises ? progress.completedExercises.length : 0}
                       </strong>
                     </div>
                   </div>
                 </div>
 
-                {/* BENTO CARD 3: Atajo Rápido al Taller / Playground */}
+                {/* BENTO CARD 3: Atajo Rápido al Taller / Playground (Secondary CTA) */}
                 <div
                   className="glass-card"
                   style={{
-                    padding: '1.15rem',
-                    background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(99, 102, 241, 0.08))',
-                    borderColor: 'rgba(6, 182, 212, 0.25)',
+                    padding: '1.25rem',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    gap: '0.75rem'
+                    gap: '1rem'
                   }}
                 >
                   <div>
-                    <strong style={{ fontSize: '0.85rem', color: '#ffffff', display: 'block' }}>¿Listo para practicar?</strong>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Entra al editor de código interactivo.</span>
+                    <strong style={{ fontSize: '0.88rem', color: '#ffffff', display: 'block' }}>¿Listo para practicar?</strong>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Entra al editor interactivo.</span>
                   </div>
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => { setActiveView('playground'); closeHomeModal(); }}
-                    className="btn-primary"
-                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.9rem', whiteSpace: 'nowrap' }}
+                    icon={ArrowRight}
+                    iconPosition="right"
                   >
-                    Abrir Taller <ArrowRight size={14} />
-                  </button>
+                    Abrir Taller
+                  </Button>
                 </div>
               </div>
             </div>

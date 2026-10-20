@@ -31,8 +31,7 @@ CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);
           title: 'Crear Índice de Búsqueda por Apellido',
           category: 'DDL',
           prompt: 'Crea un índice llamado "idx_alumnos_apellido" sobre la columna "apellido" de la tabla "alumnos".',
-          initialCode: `-- Escribe tu sentencia DDL aquí
-CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);`,
+          initialCode: `-- Escribe tu sentencia DDL aquí\nCREATE INDEX `,
           expectedQuery: 'CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);',
           hints: [
             {
@@ -51,12 +50,12 @@ CREATE INDEX idx_alumnos_apellido ON alumnos(apellido);`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'Un índice genera una estructura B-Tree ordenada de claves apuntando a los punteros de fila.'
+              content: 'Un índice genera una estructura ordenada que acelera las búsquedas por apellido.'
             }
           ],
           explanation: {
-            concept: 'Un índice genera una estructura B-Tree ordenada de claves apuntando a los punteros de fila.',
-            underTheHood: '⚡ Bajo el Capó: Las búsquedas pasan de recorrer N páginas a navegar niveles de profundidad logarítmicos en el árbol.'
+            concept: 'Un ÍNDICE es como el índice alfabético al final de un libro gordo: en lugar de hojear página por página buscando un apellido, la base de datos va directo a la página exacta al instante.',
+            tip: 'Acelera muchísimo las búsquedas con WHERE o los cruces con JOIN en tablas con miles de registros.'
           }
         }
       ]

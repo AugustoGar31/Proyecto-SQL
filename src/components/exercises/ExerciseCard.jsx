@@ -8,7 +8,7 @@ import React, { useState, useEffect, memo } from 'react';
 import { ExerciseValidatorService } from '../../services/exerciseValidator.js';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { TieredHintsPanel } from './TieredHintsPanel.jsx';
-import { Target, CheckCircle2, XCircle, Sparkles, Building } from 'lucide-react';
+import { Target, CheckCircle2, XCircle, Building } from 'lucide-react';
 
 export const ExerciseCard = memo(function ExerciseCard({ exercise, currentResult }) {
   const { completeExercise } = useProgress();

@@ -47,10 +47,7 @@ WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;
           title: 'Filtrar Estudiantes Prominentes',
           category: 'DQL',
           prompt: 'Selecciona el nombre y el promedio de los estudiantes de "Ingeniería en Sistemas" con un promedio mayor o igual a 8.5.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT nombre, promedio
-FROM estudiantes
-WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: "SELECT nombre, promedio FROM estudiantes WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;",
           hints: [
             {
@@ -73,8 +70,8 @@ WHERE carrera = 'Ingeniería en Sistemas' AND promedio >= 8.5;`,
             }
           ],
           explanation: {
-            concept: 'La cláusula WHERE filtra las filas antes de retornar el conjunto final.',
-            underTheHood: '⚡ Bajo el Capó: Si existe un índice compuesto en (carrera, promedio), el motor realiza un Index Range Scan ultra rápido.'
+            concept: 'El WHERE actúa como un filtro o portero: revisa cada fila y solo deja pasar a los de Sistemas con promedio mayor o igual a 8.5.',
+            tip: 'El operador AND exige que se cumplan las dos condiciones juntas para que el registro aparezca.'
           }
         }
       ]
@@ -109,10 +106,7 @@ WHERE nota_final IS NOT NULL;
           title: 'Filtrar Cursos sin Calificación Completa',
           category: 'DQL',
           prompt: 'Obtén el id_estudiante y la nota_final de la tabla inscripciones donde la nota_final NO sea NULL.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT id_estudiante, nota_final
-FROM inscripciones
-WHERE nota_final IS NOT NULL;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT id_estudiante, nota_final FROM inscripciones WHERE nota_final IS NOT NULL;',
           hints: [
             {
@@ -135,8 +129,8 @@ WHERE nota_final IS NOT NULL;`,
             }
           ],
           explanation: {
-            concept: 'IS NOT NULL ignora los registros pendientes de calificación.',
-            underTheHood: '⚡ Bajo el Capó: Los motores excluyen entradas NULL de ciertos tipos de índices B-Tree, optimizando el escaneo.'
+            concept: 'IS NOT NULL descarta los registros vacíos o pendientes, trayendo únicamente los alumnos que ya tienen su nota cargada.',
+            tip: 'En SQL nunca se usa != NULL porque la ausencia de datos no es un valor comparable; siempre se usa IS NOT NULL.'
           }
         }
       ]

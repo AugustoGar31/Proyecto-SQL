@@ -40,11 +40,7 @@ HAVING AVG(promedio) > 8.0;
           title: 'Promedio por Carrera Académica',
           category: 'DQL',
           prompt: 'Obtén la carrera y el promedio general de sus alumnos (alias "promedio_carrera"), agrupados por carrera, mostrando solo aquellas con promedio superior a 8.0.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT carrera, AVG(promedio) AS promedio_carrera
-FROM estudiantes
-GROUP BY carrera
-HAVING AVG(promedio) > 8.0;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT carrera, AVG(promedio) AS promedio_carrera FROM estudiantes GROUP BY carrera HAVING AVG(promedio) > 8.0;',
           hints: [
             {
@@ -67,8 +63,8 @@ HAVING AVG(promedio) > 8.0;`,
             }
           ],
           explanation: {
-            concept: 'HAVING filtra únicamente después de realizar la reducción por grupos.',
-            underTheHood: '⚡ Bajo el Capó: La BD utiliza una tabla hash en memoria donde las claves son las categorías de carrera.'
+            concept: 'El GROUP BY junta los alumnos en bolsitas por carrera, y el HAVING es un filtro exclusivo que deja pasar solo las carreras con promedio superior a 8.0.',
+            tip: 'Recordá: WHERE filtra filas individuales antes de agrupar; HAVING filtra los grupitos ya calculados.'
           }
         }
       ]

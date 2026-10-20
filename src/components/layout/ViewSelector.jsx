@@ -25,21 +25,20 @@ export function ViewSelector() {
   ];
 
   return (
-    <nav className="space-tabs">
-      {/* Botón de Inicio / Onboarding */}
+    <nav className="space-tabs" aria-label="Espacios de trabajo">
+      {/* Botón de Inicio / Onboarding como acción accesible */}
       <button
         onClick={openHomeModal}
         className="tab-btn"
         style={{
-          background: 'rgba(6, 182, 212, 0.08)',
-          borderColor: 'rgba(6, 182, 212, 0.3)',
-          color: 'var(--accent-cyan)',
-          fontWeight: 600
+          borderRight: '1px solid var(--border-subtle)',
+          marginRight: '0.25rem',
+          paddingRight: '0.85rem'
         }}
         title="Abrir Centro de Inicio y Guía de la Plataforma"
       >
-        <Home size={16} />
-        <span>Inicio</span>
+        <Home size={15} color="var(--accent-cyan)" />
+        <span style={{ color: 'var(--text-primary)' }}>Inicio</span>
       </button>
 
       {views.map((v) => {

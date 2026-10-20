@@ -73,7 +73,6 @@ export class SqlEngineService {
       // a diferencia de db.run que solo ejecuta la primera sentencia del string.
       this.db.exec(schema.sqlSetup);
       this.currentSchemaId = schema.id;
-      console.log(`[SQL Engine] Base de datos poblada exitosamente (Seeded) con el esquema: '${schema.id}'`);
       return true;
     } catch (error) {
       console.error(`[SQL Engine] Error al poblar (seed) el esquema '${schemaId}':`, error);

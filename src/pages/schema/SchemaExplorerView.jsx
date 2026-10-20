@@ -5,17 +5,10 @@
  */
 
 import React from 'react';
-import { ERDDiagram } from './ERDDiagram.jsx';
-import { SAMPLE_SCHEMAS } from '../../data/schemas/index.js';
-import { useDbEngine } from '../../context/DbEngineContext.jsx';
-import { Database, Table, Layers } from 'lucide-react';
+import { ERDDiagram } from '../../components/schema/ERDDiagram.jsx';
+import { Database } from 'lucide-react';
 
 export function SchemaExplorerView() {
-  const { currentSchemaId, runQuery } = useDbEngine();
-  const [selectedTable, setSelectedTable] = React.useState(null);
-
-  const schemas = Object.values(SAMPLE_SCHEMAS);
-
   return (
     <div className="space-container">
       {/* Header */}

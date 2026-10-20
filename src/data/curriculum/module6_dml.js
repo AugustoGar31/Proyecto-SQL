@@ -36,10 +36,7 @@ WHERE id_producto = 1;
           title: 'Reabastecer Inventario de Producto',
           category: 'DML',
           prompt: 'Incrementa en 20 unidades el stock del producto con id_producto = 1 en la tabla productos.',
-          initialCode: `-- Escribe tu sentencia DML aquí
-UPDATE productos
-SET stock = stock + 20
-WHERE id_producto = 1;`,
+          initialCode: `-- Escribe tu sentencia DML aquí\nUPDATE `,
           expectedQuery: 'UPDATE productos SET stock = stock + 20 WHERE id_producto = 1;',
           hints: [
             {
@@ -62,8 +59,8 @@ WHERE id_producto = 1;`,
             }
           ],
           explanation: {
-            concept: 'UPDATE modifica atributos de registros existentes que cumplen la condición del WHERE.',
-            underTheHood: '⚡ Bajo el Capó: Se localiza la página de disco del registro, se actualiza el valor y se marca la página como dirty en el Buffer Pool.'
+            concept: 'El UPDATE cambia datos que ya están guardados. ¡Ojo! Siempre va de la mano con un WHERE para actualizar únicamente la fila que querés y no cambiarle el dato a todos por error.',
+            tip: 'Regla de oro de los programadores: verificá dos veces la cláusula WHERE antes de ejecutar un UPDATE.'
           }
         }
       ]

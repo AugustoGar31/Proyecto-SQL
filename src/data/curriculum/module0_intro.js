@@ -47,10 +47,7 @@ Una hoja de cálculo (Excel/CSV) carece de **mecanismos de bloqueo a nivel de fi
           title: 'Verificación del Motor Relacional',
           category: 'DQL',
           prompt: 'Ejecuta una consulta para inspeccionar los primeros 5 alumnos registrados en el sistema universitario.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT id_alumno, nombre, apellido
-FROM alumnos
-LIMIT 5;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT id_alumno, nombre, apellido FROM alumnos LIMIT 5;',
           hints: [
             {
@@ -69,12 +66,12 @@ LIMIT 5;`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'SELECT id_alumno, nombre, apellido FROM alumnos LIMIT 5 recupera 5 tuplas directamente desde la memoria caché o páginas de datos del motor.'
+              content: 'SELECT id_alumno, nombre, apellido FROM alumnos LIMIT 5 recupera 5 tuplas directamente desde la base de datos.'
             }
           ],
           explanation: {
-            concept: 'SELECT y LIMIT permiten extraer un subconjunto controlado de registros.',
-            underTheHood: '⚡ En SQLite, LIMIT 5 detiene el escaneo tan pronto como el cursor B-Tree ha recuperado 5 registros, ahorrando E/S.'
+            concept: 'El SELECT elige qué columnas querés mirar y el LIMIT le pone un freno a la base de datos para traer solo los primeros 5 registros.',
+            tip: 'Pensalo como pedirle a alguien que te lea los primeros 5 nombres de una lista y se detenga ahí sin leer toda la hoja.'
           }
         }
       ]
@@ -127,10 +124,7 @@ El ejecutor orquesta los cursores. Para maximizar el rendimiento, mantiene las p
           title: 'Exploración de Metadatos del Sistema',
           category: 'DQL',
           prompt: 'Consulta el catálogo de tablas del sistema para listar los nombres de todas las tablas existentes en la base de datos.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT name
-FROM sqlite_master
-WHERE type = 'table' AND name NOT LIKE 'sqlite_%';`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';",
           hints: [
             {
@@ -149,12 +143,12 @@ WHERE type = 'table' AND name NOT LIKE 'sqlite_%';`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'La tabla sqlite_master es el diccionario de datos interno que el Parser consulta para validar esquemas.'
+              content: 'La tabla sqlite_master es el diccionario de datos interno que guarda el listado de tablas.'
             }
           ],
           explanation: {
-            concept: 'Los motores relacionales mantienen catálogos de metadatos consultables mediante SQL estándar.',
-            underTheHood: '⚡ El catálogo de esquema reside en la página raíz (Page 1) del archivo de base de datos.'
+            concept: 'El SELECT y WHERE te permiten consultar las entrañas de la base de datos para saber qué tablas existen creadas en el sistema.',
+            tip: 'sqlite_master es como el índice del libro que guarda la lista de todos los capítulos (tablas).'
           }
         }
       ]
@@ -186,10 +180,7 @@ Hoy en día, incluso tecnologías NoSQL, motores Big Data (Spark, Trino) y almac
           title: 'Consulta de Información Institucional',
           category: 'DQL',
           prompt: 'Selecciona el nombre y el presupuesto de todos los departamentos ordenados de mayor a menor presupuesto.',
-          initialCode: `-- Escribe tu consulta aquí
-SELECT nombre, presupuesto
-FROM departamentos
-ORDER BY presupuesto DESC;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'SELECT nombre, presupuesto FROM departamentos ORDER BY presupuesto DESC;',
           hints: [
             {
@@ -208,12 +199,12 @@ ORDER BY presupuesto DESC;`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'SELECT nombre, presupuesto FROM departamentos ORDER BY presupuesto DESC aplica el estándar ANSI SQL-92 para ordenar tuplas.'
+              content: 'SELECT nombre, presupuesto FROM departamentos ORDER BY presupuesto DESC aplica el estándar ANSI SQL para ordenar tuplas.'
             }
           ],
           explanation: {
-            concept: 'ORDER BY DESC ordena los registros numéricos o alfanuméricos de forma descendente.',
-            underTheHood: '⚡ Si existe un índice en presupuesto, el motor recorre las hojas del árbol B-Tree en sentido inverso sin necesidad de un Sort en memoria temporal.'
+            concept: 'El ORDER BY acomoda los resultados: DESC los ordena de mayor a menor (como el departamento con más presupuesto primero).',
+            tip: 'Si no ponés nada o ponés ASC, los resultados se ordenan de menor a mayor.'
           }
         }
       ]

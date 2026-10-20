@@ -37,14 +37,7 @@ END;
           title: 'Crear Trigger de Auditoría de Inventario',
           category: 'PROCEDURAL',
           prompt: 'Crea un Trigger "trg_auditoria_inventario" ejecutado AFTER UPDATE OF stock ON productos FOR EACH ROW que inserte en auditoria_stock (id_producto, stock_anterior, stock_nuevo) los valores OLD y NEW.',
-          initialCode: `-- Escribe tu sentencia DDL/Trigger aquí
-CREATE TRIGGER trg_auditoria_inventario
-AFTER UPDATE OF stock ON productos
-FOR EACH ROW
-BEGIN
-  INSERT INTO auditoria_stock (id_producto, stock_anterior, stock_nuevo)
-  VALUES (OLD.id_producto, OLD.stock, NEW.stock);
-END;`,
+          initialCode: `-- Escribe tu disparador (Trigger) aquí\nCREATE TRIGGER `,
           expectedQuery: 'CREATE TRIGGER trg_auditoria_inventario AFTER UPDATE OF stock ON productos FOR EACH ROW BEGIN INSERT INTO auditoria_stock (id_producto, stock_anterior, stock_nuevo) VALUES (OLD.id_producto, OLD.stock, NEW.stock); END;',
           hints: [
             {
@@ -63,12 +56,12 @@ END;`,
               level: 3,
               type: 'solution_breakdown',
               title: 'Explicación de la Solución',
-              content: 'Un trigger registra un hook automático en el catálogo ejecutado sincrónicamente ante cada fila modificada.'
+              content: 'Un trigger registra una acción automática ejecutada por la base de datos ante cada fila modificada.'
             }
           ],
           explanation: {
-            concept: 'Un trigger registra un hook automático en el catálogo.',
-            underTheHood: '⚡ Bajo el Capó: La transacción original del UPDATE no se confirma hasta que el Trigger completa síncronamente su inserción.'
+            concept: 'Un TRIGGER (disparador) es como un sensor de movimiento o una alarma automática: se queda vigilando la tabla y, cuando alguien hace un cambio (como actualizar el stock), salta solo y ejecuta una acción por su cuenta sin que tengas que pedírselo.',
+            tip: 'OLD representa los valores antes del cambio y NEW representa los valores nuevos que se acaban de escribir.'
           }
         }
       ]

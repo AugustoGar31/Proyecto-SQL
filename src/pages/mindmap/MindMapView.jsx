@@ -6,8 +6,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MINDMAP_CATEGORIES } from './mindMapData.js';
-import { CategoryDetailView } from './CategoryDetailView.jsx';
+import { MINDMAP_CATEGORIES } from '../../data/mindMapData.js';
+import { CategoryDetailView } from '../../components/mindmap/CategoryDetailView.jsx';
 import { Network, Sparkles } from 'lucide-react';
 
 // Variantes de animación para el mapa base (estáticas en módulo para evitar re-instanciación)

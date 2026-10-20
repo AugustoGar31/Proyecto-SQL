@@ -39,15 +39,7 @@ JOIN MejoresClientes mc ON c.id_cliente = mc.id_cliente;
           title: 'Identificar Clientes VIP con CTE',
           category: 'DQL',
           prompt: 'Utiliza una CTE llamada "ClientesVIP" que seleccione id_cliente y la suma de sus pedidos como "total", e iguala con la tabla clientes para retornar el nombre y total.',
-          initialCode: `-- Escribe tu consulta aquí
-WITH ClientesVIP AS (
-  SELECT id_cliente, SUM(monto_total) AS total
-  FROM pedidos
-  GROUP BY id_cliente
-)
-SELECT c.nombre, cv.total
-FROM clientes c
-JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;`,
+          initialCode: `-- Escribe tu consulta aquí\nSELECT `,
           expectedQuery: 'WITH ClientesVIP AS (SELECT id_cliente, SUM(monto_total) AS total FROM pedidos GROUP BY id_cliente) SELECT c.nombre, cv.total FROM clientes c JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;',
           hints: [
             {
@@ -70,8 +62,8 @@ JOIN ClientesVIP cv ON c.id_cliente = cv.id_cliente;`,
             }
           ],
           explanation: {
-            concept: 'La CTE descompone la lógica en pasos modulares legibles.',
-            underTheHood: '⚡ Bajo el Capó: El motor crea un result-set efímero en la memoria de trabajo de la sesión.'
+            concept: 'Una CTE (WITH) es como crear una tabla temporal en el aire con un nombre claro para usarla inmediatamente en tu consulta principal.',
+            tip: 'Pensalo como resolver un ejercicio matemático en dos partes: primero calculás el total por cliente y luego lo mostrás con sus nombres.'
           }
         }
       ]

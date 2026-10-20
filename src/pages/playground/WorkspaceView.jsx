@@ -5,14 +5,16 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { SqlEditor, STRICT_SQL_TEMPLATE } from './SqlEditor.jsx';
-import { ResultsTable } from './ResultsTable.jsx';
-import { DbInternalsViewer } from './DbInternalsViewer.jsx';
-import { ExerciseCard } from '../exercises/ExerciseCard.jsx';
-import { ERDDiagram } from '../schema/ERDDiagram.jsx';
+import { SqlEditor } from '../../components/playground/SqlEditor.jsx';
+import { ResultsTable } from '../../components/playground/ResultsTable.jsx';
+import { DbInternalsViewer } from '../../components/playground/DbInternalsViewer.jsx';
+import { ExerciseCard } from '../../components/exercises/ExerciseCard.jsx';
+import { ERDDiagram } from '../../components/schema/ERDDiagram.jsx';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { useDbEngine } from '../../context/DbEngineContext.jsx';
-import { Terminal, Cpu, Database, ChevronRight, Rocket, Sparkles } from 'lucide-react';
+import { getCleanStarterTemplate } from '../../data/simpleExplanations.js';
+import { Button } from '../../components/common/Button.jsx';
+import { Terminal, Database, Rocket, BookOpen } from 'lucide-react';
 
 const DEFAULT_PLAYGROUND_SQL = `-- 🚀 Entorno Playground Libre SQL
 -- Escribe y ejecuta cualquier consulta SQL sin restricciones de lecciones
@@ -21,13 +23,13 @@ SELECT * FROM estudiantes;
 `;
 
 export function WorkspaceView() {
-  const { currentLesson } = useProgress();
+  const { currentLesson, activeExercise } = useProgress();
   const { isReady, initError, runQuery, retryInitialization } = useDbEngine();
 
   // Estados del Modo Lección / Desafío
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'internals'
-  const [editorSql, setEditorSql] = useState(STRICT_SQL_TEMPLATE);
-  const editorSqlRef = React.useRef(STRICT_SQL_TEMPLATE);
+  const [editorSql, setEditorSql] = useState(() => getCleanStarterTemplate(activeExercise));
+  const editorSqlRef = React.useRef(getCleanStarterTemplate(activeExercise));
   const [queryResult, setQueryResult] = useState(null);
   const [showErd, setShowErd] = useState(false);
 
@@ -38,12 +40,11 @@ export function WorkspaceView() {
   const [playgroundResult, setPlaygroundResult] = useState(null);
   const [playgroundTab, setPlaygroundTab] = useState('editor'); // 'editor' | 'internals'
 
-  const activeExercise = currentLesson && currentLesson.exercises ? currentLesson.exercises[0] : null;
-
   useEffect(() => {
     if (activeExercise) {
-      editorSqlRef.current = STRICT_SQL_TEMPLATE;
-      setEditorSql(STRICT_SQL_TEMPLATE);
+      const code = getCleanStarterTemplate(activeExercise);
+      editorSqlRef.current = code;
+      setEditorSql(code);
       setQueryResult(null);
     }
   }, [activeExercise]);
@@ -63,10 +64,11 @@ export function WorkspaceView() {
   }, [runQuery]);
 
   const handleResetEditor = useCallback(() => {
-    editorSqlRef.current = STRICT_SQL_TEMPLATE;
-    setEditorSql(STRICT_SQL_TEMPLATE);
+    const code = getCleanStarterTemplate(activeExercise);
+    editorSqlRef.current = code;
+    setEditorSql(code);
     setQueryResult(null);
-  }, []);
+  }, [activeExercise]);
 
   const handleResetPlayground = useCallback(() => {
     playgroundSqlRef.current = DEFAULT_PLAYGROUND_SQL;
@@ -79,13 +81,13 @@ export function WorkspaceView() {
       <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--accent-rose)' }}>
         <h2>⚠️ Error al iniciar el motor SQL WebAssembly</h2>
         <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 1.5rem 0' }}>{initError}</p>
-        <button
+        <Button
+          variant="primary"
+          size="md"
           onClick={retryInitialization}
-          className="btn-glass"
-          style={{ background: 'var(--accent-cyan)', color: '#000', fontWeight: 600, padding: '0.66rem 1.25rem' }}
         >
           🔄 Reintentar Inicialización de Base de Datos
-        </button>
+        </Button>
       </div>
     );
   }
@@ -106,35 +108,29 @@ export function WorkspaceView() {
           <h2 style={{ fontSize: '1.5rem', color: '#ffffff', margin: 0 }}>
             {isPlaygroundMode
               ? 'Playground Interactivo'
-              : (currentLesson ? currentLesson.title : 'Taller Práctico')}
+              : (activeExercise ? activeExercise.title : (currentLesson ? currentLesson.title : 'Taller Práctico'))}
           </h2>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <button
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Button
+            variant="secondary"
+            size="md"
             onClick={() => setIsPlaygroundMode(!isPlaygroundMode)}
-            className="btn-glass"
-            style={{
-              fontSize: '0.82rem',
-              borderColor: isPlaygroundMode ? 'var(--accent-cyan)' : 'rgba(56, 189, 248, 0.35)',
-              background: isPlaygroundMode ? 'rgba(56, 189, 248, 0.18)' : 'rgba(56, 189, 248, 0.08)',
-              color: 'var(--accent-cyan)',
-              boxShadow: isPlaygroundMode ? '0 0 15px rgba(56, 189, 248, 0.25)' : '0 0 12px rgba(56, 189, 248, 0.1)',
-              fontWeight: 600
-            }}
+            icon={Rocket}
+            style={isPlaygroundMode ? { borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)' } : {}}
           >
-            <Rocket size={16} />
             {isPlaygroundMode ? 'Volver a la Lección' : 'Playground'}
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="secondary"
+            size="md"
             onClick={() => setShowErd(!showErd)}
-            className="btn-glass"
-            style={{ fontSize: '0.82rem' }}
+            icon={Database}
           >
-            <Database size={16} />
             {showErd ? 'Ocultar ERD' : 'Ver Diagrama ERD'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -167,8 +163,8 @@ export function WorkspaceView() {
                 className={`tab-btn ${playgroundTab === 'internals' ? 'active' : ''}`}
                 style={{ background: playgroundTab === 'internals' ? 'var(--accent-indigo)' : 'transparent' }}
               >
-                <Cpu size={16} />
-                Explicación "Bajo el Capó"
+                <BookOpen size={16} />
+                Explicación Lógica
               </button>
             </div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -188,7 +184,7 @@ export function WorkspaceView() {
               <ResultsTable queryResult={playgroundResult} />
             </div>
           ) : (
-            /* Vista 2: Explicación de Internals Libre */
+            /* Vista 2: Explicación Lógica Libre */
             <DbInternalsViewer
               queryResult={playgroundResult}
               exerciseExplanation="En el Playground Libre puedes consultar el plan de ejecución de SQLite (EXPLAIN QUERY PLAN) para inspeccionar índices y optimizar tus consultas."
@@ -225,8 +221,8 @@ export function WorkspaceView() {
                   className={`tab-btn ${activeTab === 'internals' ? 'active' : ''}`}
                   style={{ background: activeTab === 'internals' ? 'var(--accent-indigo)' : 'transparent' }}
                 >
-                  <Cpu size={16} />
-                  Explicación "Bajo el Capó"
+                  <BookOpen size={16} />
+                  Explicación Lógica
                 </button>
               </div>
 
@@ -242,10 +238,11 @@ export function WorkspaceView() {
                   <ResultsTable queryResult={queryResult} />
                 </div>
               ) : (
-                /* Vista 2: Explicación de Internals */
+                /* Vista 2: Explicación Lógica */
                 <DbInternalsViewer
                   queryResult={queryResult}
                   exerciseExplanation={activeExercise ? activeExercise.explanation : null}
+                  activeExercise={activeExercise}
                 />
               )}
             </div>

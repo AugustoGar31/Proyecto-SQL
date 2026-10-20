@@ -8,6 +8,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, Compass, Lock, Unlock } from 'lucide-react';
+import { Button } from '../common/Button.jsx';
 
 export function TieredHintsPanel({ hints }) {
   // Estado de desbloqueo: 0 = ninguna, 1 = Pista 1 visible, 2 = Ambas pistas visibles
@@ -62,24 +63,23 @@ export function TieredHintsPanel({ hints }) {
 
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           {unlockedLevel === 0 ? (
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => handleUnlockLevel(1)}
-              className="btn-glass"
-              style={{ fontSize: '0.78rem', padding: '0.3rem 0.75rem', color: 'var(--accent-amber)' }}
-              type="button"
+              icon={Unlock}
+              style={{ color: 'var(--accent-amber)', borderColor: 'rgba(245, 158, 11, 0.3)' }}
             >
-              <Unlock size={13} />
               Revelar Pista 1 (Indirecta)
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleToggleHide}
-              className="btn-glass"
-              style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', color: 'var(--text-muted)' }}
-              type="button"
             >
               Ocultar Pistas
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -117,15 +117,15 @@ export function TieredHintsPanel({ hints }) {
                 </div>
 
                 {isLocked && (
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleUnlockLevel(levelNum)}
-                    className="btn-glass"
-                    style={{ fontSize: '0.72rem', padding: '0.25rem 0.6rem', color: accentColor }}
-                    type="button"
+                    icon={Lock}
+                    style={{ color: accentColor, borderColor: 'rgba(255, 255, 255, 0.1)' }}
                   >
-                    <Lock size={12} />
                     Desbloquear Pista {levelNum}
-                  </button>
+                  </Button>
                 )}
               </div>
 

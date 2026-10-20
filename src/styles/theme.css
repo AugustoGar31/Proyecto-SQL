@@ -30,7 +30,7 @@
   /* Colores de Texto y Tipografía */
   --text-primary: #f8fafc;            /* Blanco Slate principal */
   --text-secondary: #94a3b8;          /* Gris Slate para descripciones */
-  --text-muted: #64748b;              /* Gris apagado para comentarios y timestamps */
+  --text-muted: #8ca0b8;              /* Gris Slate legible para metadatos (Cumple WCAG AA > 4.5:1) */
 
   /* Bordes y Líneas de Separación */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -41,10 +41,19 @@
   /* ==========================================
      2. GEOMETRÍA, ELEVACIÓN Y EFECTOS
      ========================================== */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
+
+  /* Espaciado Armónico (Ritmo de 8px) */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+  --space-2xl: 3rem;    /* 48px */
 
   /* Sombras y Brillos Glow */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -54,14 +63,22 @@
   --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.35);
 
   /* Efecto Glassmorphism Optimizado */
-  --backdrop-blur: blur(8px);
+  --backdrop-blur: blur(12px);
   --glass-border: 1px solid rgba(255, 255, 255, 0.1);
 
   /* ==========================================
-     3. TIPOGRAFÍAS
+     3. TIPOGRAFÍAS Y ESCALA MODULAR
      ========================================== */
   --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-code: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+
+  /* Escala Tipográfica */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.825rem;   /* 13.2px */
+  --text-base: 0.925rem; /* 14.8px */
+  --text-md: 1.05rem;    /* 16.8px */
+  --text-lg: 1.35rem;    /* 21.6px */
+  --text-xl: 1.75rem;    /* 28px */
 
   /* Transiciones */
   --transition-fast: 0.15s ease;

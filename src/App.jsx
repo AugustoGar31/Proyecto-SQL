@@ -11,16 +11,16 @@
 
 import React, { useState, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Navbar } from './components/common/Navbar.jsx';
+import { Navbar } from './components/layout/Navbar.jsx';
 import { SplashScreen } from './components/common/SplashScreen.jsx';
 import { HomeOnboardingModal } from './components/home/HomeOnboardingModal.jsx';
 
 // Code-Splitting: Carga bajo demanda de las 5 áreas de trabajo
-const WorkspaceView = lazy(() => import('./components/playground/WorkspaceView.jsx').then(m => ({ default: m.WorkspaceView })));
-const TheorySpaceView = lazy(() => import('./components/theory/TheorySpaceView.jsx').then(m => ({ default: m.TheorySpaceView })));
-const MindMapView = lazy(() => import('./components/mindmap/MindMapView.jsx').then(m => ({ default: m.MindMapView })));
-const ExerciseHubView = lazy(() => import('./components/exercises/ExerciseHubView.jsx').then(m => ({ default: m.ExerciseHubView })));
-const SchemaExplorerView = lazy(() => import('./components/schema/SchemaExplorerView.jsx').then(m => ({ default: m.SchemaExplorerView })));
+const WorkspaceView = lazy(() => import('./pages/playground/WorkspaceView.jsx').then(m => ({ default: m.WorkspaceView })));
+const TheorySpaceView = lazy(() => import('./pages/theory/TheorySpaceView.jsx').then(m => ({ default: m.TheorySpaceView })));
+const MindMapView = lazy(() => import('./pages/mindmap/MindMapView.jsx').then(m => ({ default: m.MindMapView })));
+const ExerciseHubView = lazy(() => import('./pages/exercises/ExerciseHubView.jsx').then(m => ({ default: m.ExerciseHubView })));
+const SchemaExplorerView = lazy(() => import('./pages/schema/SchemaExplorerView.jsx').then(m => ({ default: m.SchemaExplorerView })));
 
 import { ViewProvider, useView } from './context/ViewContext.jsx';
 import { ProgressProvider } from './context/ProgressContext.jsx';

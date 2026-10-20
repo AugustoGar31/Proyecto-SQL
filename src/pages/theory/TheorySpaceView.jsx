@@ -5,9 +5,9 @@
  */
 
 import React from 'react';
-import { LearningPlaybooksSidebar } from '../navigation/LearningPlaybooksSidebar.jsx';
-import { LessonContent } from './LessonContent.jsx';
-import { ModuleZeroView } from './moduleZero/ModuleZeroView.jsx';
+import { LearningPlaybooksSidebar } from '../../components/layout/LearningPlaybooksSidebar.jsx';
+import { LessonContent } from '../../components/theory/LessonContent.jsx';
+import { ModuleZeroView } from '../../components/theory/moduleZero/ModuleZeroView.jsx';
 import { useProgress } from '../../context/ProgressContext.jsx';
 
 export function TheorySpaceView() {

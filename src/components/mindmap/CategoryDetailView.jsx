@@ -6,7 +6,7 @@
 
 import React, { memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BookOpen, Terminal, Sparkles, Database } from 'lucide-react';
+import { ArrowLeft, Terminal, Sparkles, Database } from 'lucide-react';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { useView } from '../../context/ViewContext.jsx';
 
