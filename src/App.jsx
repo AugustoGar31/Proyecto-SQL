@@ -14,6 +14,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Navbar } from './components/layout/Navbar.jsx';
 import { SplashScreen } from './components/common/SplashScreen.jsx';
 import { HomeOnboardingModal } from './components/home/HomeOnboardingModal.jsx';
+import { ErrorBoundary } from './components/common/ErrorBoundary.jsx';
 
 // Code-Splitting: Carga bajo demanda de las 5 áreas de trabajo
 const WorkspaceView = lazy(() => import('./pages/playground/WorkspaceView.jsx').then(m => ({ default: m.WorkspaceView })));
@@ -56,13 +57,15 @@ function MainLayout() {
 
       {/* Renderizado Dinámico con Suspense y Code-Splitting */}
       <main className="main-content">
-        <Suspense fallback={<ViewLoadingFallback />}>
-          {activeView === 'playground' && <WorkspaceView />}
-          {activeView === 'theory' && <TheorySpaceView />}
-          {activeView === 'mindmap' && <MindMapView />}
-          {activeView === 'exercises' && <ExerciseHubView />}
-          {activeView === 'schema' && <SchemaExplorerView />}
-        </Suspense>
+        <ErrorBoundary inline key={activeView}>
+          <Suspense fallback={<ViewLoadingFallback />}>
+            {activeView === 'playground' && <WorkspaceView />}
+            {activeView === 'theory' && <TheorySpaceView />}
+            {activeView === 'mindmap' && <MindMapView />}
+            {activeView === 'exercises' && <ExerciseHubView />}
+            {activeView === 'schema' && <SchemaExplorerView />}
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );

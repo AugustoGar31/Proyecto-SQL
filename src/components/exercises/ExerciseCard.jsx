@@ -4,27 +4,11 @@
  * sistema de pistas escalonadas (3 niveles) y feedback de validación en tiempo real.
  */
 
-import React, { useState, useEffect, memo } from 'react';
-import { ExerciseValidatorService } from '../../services/exerciseValidator.js';
-import { useProgress } from '../../context/ProgressContext.jsx';
+import React, { memo } from 'react';
 import { TieredHintsPanel } from './TieredHintsPanel.jsx';
 import { Target, CheckCircle2, XCircle, Building } from 'lucide-react';
 
-export const ExerciseCard = memo(function ExerciseCard({ exercise, currentResult }) {
-  const { completeExercise } = useProgress();
-  const [evaluation, setEvaluation] = useState(null);
-
-  useEffect(() => {
-    if (currentResult && exercise) {
-      const res = ExerciseValidatorService.validate(exercise, currentResult);
-      setEvaluation(res);
-      if (res.isPassed) {
-        completeExercise(exercise.id);
-      }
-    } else {
-      setEvaluation(null);
-    }
-  }, [currentResult, exercise, completeExercise]);
+export const ExerciseCard = memo(function ExerciseCard({ exercise, evaluation }) {
 
   if (!exercise) return null;
 

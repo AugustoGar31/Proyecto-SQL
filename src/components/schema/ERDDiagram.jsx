@@ -8,10 +8,43 @@ import { SAMPLE_SCHEMAS } from '../../data/schemas/index.js';
 import { useDbEngine } from '../../context/DbEngineContext.jsx';
 import { Database, Key, Table as TableIcon } from 'lucide-react';
 
-export const ERDDiagram = memo(function ERDDiagram() {
+function extractTablesFromSql(sql) {
+  if (!sql) return [];
+  const tableRegex = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_]+)\s*\(([\s\S]*?)\);/gi;
+  const tables = [];
+  let match;
+  while ((match = tableRegex.exec(sql)) !== null) {
+    const tableName = match[1];
+    const body = match[2];
+    const lines = body.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('--'));
+    const fields = [];
+    for (const line of lines) {
+      if (/^(PRIMARY\s+KEY|FOREIGN\s+KEY|CHECK|UNIQUE|CONSTRAINT)/i.test(line)) continue;
+      const colMatch = line.match(/^([a-zA-Z0-9_]+)\s+([A-Z0-9_]+)(.*)/i);
+      if (colMatch) {
+        const colName = colMatch[1];
+        const colType = colMatch[2].toUpperCase();
+        const rest = colMatch[3] || '';
+        const isPk = /PRIMARY\s+KEY/i.test(rest) || (colName.startsWith('id_') && !/FOREIGN/i.test(line));
+        const isFk = /REFERENCES/i.test(rest) || /FOREIGN\s+KEY/i.test(line);
+        let tag = '';
+        if (isPk) tag = ' (PK)';
+        else if (isFk) tag = ' (FK)';
+        fields.push([`${colName}${tag}`, colType]);
+      }
+    }
+    if (fields.length > 0) {
+      tables.push({ name: tableName, fields });
+    }
+  }
+  return tables;
+}
+
+export const ERDDiagram = memo(function ERDDiagram({ schemaId }) {
   const { currentSchemaId } = useDbEngine();
-  const schemaKey = currentSchemaId || 'universidad';
+  const schemaKey = schemaId || currentSchemaId || 'universidad';
   const schema = SAMPLE_SCHEMAS[schemaKey] || SAMPLE_SCHEMAS['universidad'];
+  const tables = (schema && schema.tables) ? schema.tables : extractTablesFromSql(schema?.sqlSetup);
 
   return (
     <div className="glass-card" style={{ padding: '1.25rem' }}>
@@ -26,32 +59,11 @@ export const ERDDiagram = memo(function ERDDiagram() {
         {schema.description}
       </p>
 
-      {/* Grid de Tablas Relacionales del ERD */}
+      {/* Grid de Tablas Relacionales del ERD Dinámico */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-        {schemaKey === 'universidad' && (
-          <>
-            <TableBox name="estudiantes" fields={[['id_estudiante (PK)', 'INTEGER'], ['nombre', 'TEXT'], ['carrera', 'TEXT'], ['promedio', 'REAL'], ['fecha_ingreso', 'DATE']]} />
-            <TableBox name="profesores" fields={[['id_profesor (PK)', 'INTEGER'], ['nombre', 'TEXT'], ['departamento', 'TEXT'], ['email', 'TEXT']]} />
-            <TableBox name="cursos" fields={[['id_curso (PK)', 'INTEGER'], ['nombre_curso', 'TEXT'], ['creditos', 'INTEGER'], ['id_profesor (FK)', 'INTEGER']]} />
-            <TableBox name="inscripciones" fields={[['id_inscripcion (PK)', 'INTEGER'], ['id_estudiante (FK)', 'INTEGER'], ['id_curso (FK)', 'INTEGER'], ['nota_final', 'REAL']]} />
-          </>
-        )}
-
-        {schemaKey === 'tienda_online' && (
-          <>
-            <TableBox name="clientes" fields={[['id_cliente (PK)', 'INTEGER'], ['nombre', 'TEXT'], ['email', 'TEXT'], ['pais', 'TEXT'], ['saldo', 'REAL']]} />
-            <TableBox name="productos" fields={[['id_producto (PK)', 'INTEGER'], ['nombre_producto', 'TEXT'], ['categoria', 'TEXT'], ['precio', 'REAL'], ['stock', 'INTEGER']]} />
-            <TableBox name="pedidos" fields={[['id_pedido (PK)', 'INTEGER'], ['id_cliente (FK)', 'INTEGER'], ['fecha_pedido', 'DATE'], ['monto_total', 'REAL']]} />
-            <TableBox name="auditoria_stock" fields={[['id_auditoria (PK)', 'INTEGER'], ['id_producto', 'INTEGER'], ['stock_anterior', 'INTEGER'], ['stock_nuevo', 'INTEGER']]} />
-          </>
-        )}
-
-        {schemaKey === 'banco' && (
-          <>
-            <TableBox name="cuentas_bancarias" fields={[['id_cuenta (PK)', 'INTEGER'], ['titular', 'TEXT'], ['tipo_cuenta', 'TEXT'], ['saldo', 'REAL']]} />
-            <TableBox name="transacciones_log" fields={[['id_log (PK)', 'INTEGER'], ['id_origen', 'INTEGER'], ['id_destino', 'INTEGER'], ['monto', 'REAL']]} />
-          </>
-        )}
+        {tables.map((table) => (
+          <TableBox key={table.name} name={table.name} fields={table.fields} />
+        ))}
       </div>
     </div>
   );

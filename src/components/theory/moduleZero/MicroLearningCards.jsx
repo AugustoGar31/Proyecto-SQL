@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useView } from '../../../context/ViewContext.jsx';
-import { useProgress } from '../../../context/ProgressContext.jsx';
+import { useCurriculum } from '../../../context/ProgressContext.jsx';
 import { Button } from '../../common/Button.jsx';
 import {
   Database,
@@ -58,7 +58,7 @@ const FLASHCARDS = [
 export function MicroLearningCards() {
   const [currentStep, setCurrentStep] = useState(0);
   const { setActiveView } = useView();
-  const { selectLesson } = useProgress();
+  const { selectLesson } = useCurriculum();
 
   const card = FLASHCARDS[currentStep];
   const IconComponent = card.icon;

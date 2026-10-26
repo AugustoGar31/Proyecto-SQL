@@ -26,8 +26,53 @@ export class ErrorBoundary extends React.Component {
     window.location.reload();
   };
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return typeof this.props.fallback === 'function'
+          ? this.props.fallback(this.state.error, this.handleRetry)
+          : this.props.fallback;
+      }
+
+      if (this.props.inline) {
+        return (
+          <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center', margin: '1rem 0' }}>
+            <div style={{ color: 'var(--accent-rose)', marginBottom: '0.75rem', display: 'flex', justifyContent: 'center' }}>
+              <AlertOctagon size={42} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', color: '#ffffff', margin: '0 0 0.5rem 0' }}>
+              Ocurrió un error al cargar este espacio
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: '0 0 1.25rem 0' }}>
+              {this.state.error ? this.state.error.message : 'Error inesperado de renderizado.'}
+            </p>
+            <button
+              onClick={this.handleRetry}
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#ffffff',
+                border: '1px solid var(--border-subtle)',
+                padding: '0.6rem 1.25rem',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '0.88rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              <RotateCcw size={16} />
+              Reintentar Cargar Espacio
+            </button>
+          </div>
+        );
+      }
+
       return (
         <div style={{
           minHeight: '100vh',

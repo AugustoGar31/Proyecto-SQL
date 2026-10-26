@@ -10,18 +10,18 @@ import { getFriendlyExplanation } from '../../data/simpleExplanations.js';
 
 export const DbInternalsViewer = memo(function DbInternalsViewer({
   queryResult,
-  exerciseExplanation,
-  activeExercise
+  activeExercise,
+  fallbackExplanation
 }) {
   const explainPlan = queryResult && queryResult.explainPlan ? queryResult.explainPlan : null;
 
   // Obtener la explicación amigable para principiantes
   const friendly = activeExercise
     ? getFriendlyExplanation(activeExercise)
-    : (typeof exerciseExplanation === 'string'
+    : (typeof fallbackExplanation === 'string'
         ? {
             command: 'SQL General',
-            summary: exerciseExplanation,
+            summary: fallbackExplanation,
             tip: 'Prueba escribir distintas cláusulas para ver cómo responde la base de datos.'
           }
         : getFriendlyExplanation(null));

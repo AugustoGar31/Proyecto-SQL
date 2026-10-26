@@ -10,6 +10,7 @@ import { ResultsTable } from '../../components/playground/ResultsTable.jsx';
 import { DbInternalsViewer } from '../../components/playground/DbInternalsViewer.jsx';
 import { ExerciseCard } from '../../components/exercises/ExerciseCard.jsx';
 import { ERDDiagram } from '../../components/schema/ERDDiagram.jsx';
+import { ExerciseValidatorService } from '../../services/exerciseValidator.js';
 import { useProgress } from '../../context/ProgressContext.jsx';
 import { useDbEngine } from '../../context/DbEngineContext.jsx';
 import { getCleanStarterTemplate } from '../../data/simpleExplanations.js';
@@ -23,14 +24,15 @@ SELECT * FROM estudiantes;
 `;
 
 export function WorkspaceView() {
-  const { currentLesson, activeExercise } = useProgress();
-  const { isReady, initError, runQuery, retryInitialization } = useDbEngine();
+  const { currentLesson, activeExercise, completeExercise } = useProgress();
+  const { isReady, initError, currentSchemaId, switchSchema, runQuery, retryInitialization } = useDbEngine();
 
   // Estados del Modo Lección / Desafío
   const [activeTab, setActiveTab] = useState('editor'); // 'editor' | 'internals'
   const [editorSql, setEditorSql] = useState(() => getCleanStarterTemplate(activeExercise));
   const editorSqlRef = React.useRef(getCleanStarterTemplate(activeExercise));
   const [queryResult, setQueryResult] = useState(null);
+  const [evaluation, setEvaluation] = useState(null);
   const [showErd, setShowErd] = useState(false);
 
   // Estados del Modo Playground Libre
@@ -46,6 +48,7 @@ export function WorkspaceView() {
       editorSqlRef.current = code;
       setEditorSql(code);
       setQueryResult(null);
+      setEvaluation(null);
     }
   }, [activeExercise]);
 
@@ -54,7 +57,14 @@ export function WorkspaceView() {
     if (!code || !code.trim()) return;
     const res = runQuery(code);
     setQueryResult(res);
-  }, [runQuery]);
+    if (activeExercise) {
+      const evalRes = ExerciseValidatorService.validate(activeExercise, res);
+      setEvaluation(evalRes);
+      if (evalRes.isPassed) {
+        completeExercise(activeExercise.id);
+      }
+    }
+  }, [runQuery, activeExercise, completeExercise]);
 
   const handleExecutePlayground = useCallback((sqlText) => {
     const code = typeof sqlText === 'string' ? sqlText : playgroundSqlRef.current;
@@ -68,6 +78,7 @@ export function WorkspaceView() {
     editorSqlRef.current = code;
     setEditorSql(code);
     setQueryResult(null);
+    setEvaluation(null);
   }, [activeExercise]);
 
   const handleResetPlayground = useCallback(() => {
@@ -112,7 +123,31 @@ export function WorkspaceView() {
           </h2>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          {isPlaygroundMode && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>Base de Datos:</span>
+              <select
+                value={currentSchemaId || 'universidad'}
+                onChange={(e) => switchSchema && switchSchema(e.target.value)}
+                style={{
+                  padding: '0.35rem 0.65rem',
+                  fontSize: '0.82rem',
+                  color: '#ffffff',
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--border-subtle)',
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}
+              >
+                <option value="universidad">🎓 Universidad</option>
+                <option value="tienda_online">🛍️ E-Commerce</option>
+                <option value="banco">🏦 Banco</option>
+              </select>
+            </div>
+          )}
+
           <Button
             variant="secondary"
             size="md"
@@ -177,7 +212,10 @@ export function WorkspaceView() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <SqlEditor
                 value={playgroundSql}
-                onChange={(val) => { playgroundSqlRef.current = val; }}
+                onChange={(val) => {
+                  playgroundSqlRef.current = val;
+                  setPlaygroundSql(val);
+                }}
                 onExecute={handleExecutePlayground}
                 onReset={handleResetPlayground}
               />
@@ -187,7 +225,7 @@ export function WorkspaceView() {
             /* Vista 2: Explicación Lógica Libre */
             <DbInternalsViewer
               queryResult={playgroundResult}
-              exerciseExplanation="En el Playground Libre puedes consultar el plan de ejecución de SQLite (EXPLAIN QUERY PLAN) para inspeccionar índices y optimizar tus consultas."
+              fallbackExplanation="En el Playground Libre puedes consultar el plan de ejecución de SQLite (EXPLAIN QUERY PLAN) para inspeccionar índices y optimizar tus consultas."
             />
           )}
         </div>
@@ -198,8 +236,9 @@ export function WorkspaceView() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {activeExercise && (
               <ExerciseCard
+                key={activeExercise.id}
                 exercise={activeExercise}
-                currentResult={queryResult}
+                evaluation={evaluation}
               />
             )}
           </div>
@@ -231,7 +270,10 @@ export function WorkspaceView() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <SqlEditor
                     value={editorSql}
-                    onChange={(val) => { editorSqlRef.current = val; }}
+                    onChange={(val) => {
+                      editorSqlRef.current = val;
+                      setEditorSql(val);
+                    }}
                     onExecute={handleExecuteSql}
                     onReset={handleResetEditor}
                   />
@@ -241,7 +283,6 @@ export function WorkspaceView() {
                 /* Vista 2: Explicación Lógica */
                 <DbInternalsViewer
                   queryResult={queryResult}
-                  exerciseExplanation={activeExercise ? activeExercise.explanation : null}
                   activeExercise={activeExercise}
                 />
               )}

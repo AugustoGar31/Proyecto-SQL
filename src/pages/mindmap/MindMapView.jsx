@@ -4,10 +4,12 @@
  * Implementa una arquitectura visual limpia con transiciones suaves (Framer Motion) y vistas detalladas por categoría.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MINDMAP_CATEGORIES } from '../../data/mindMapData.js';
 import { CategoryDetailView } from '../../components/mindmap/CategoryDetailView.jsx';
+import { useCurriculum } from '../../context/ProgressContext.jsx';
+import { useView } from '../../context/ViewContext.jsx';
 import { Network, Sparkles } from 'lucide-react';
 
 // Variantes de animación para el mapa base (estáticas en módulo para evitar re-instanciación)
@@ -36,6 +38,15 @@ const CATEGORY_POSITIONS = [
 
 export function MindMapView() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const { selectLesson } = useCurriculum();
+  const { setActiveView } = useView();
+
+  const handlePracticeCommand = useCallback((lessonId) => {
+    if (lessonId) {
+      selectLesson(lessonId);
+      setActiveView('playground');
+    }
+  }, [selectLesson, setActiveView]);
 
   const activeCategory = selectedCategoryId ? MINDMAP_CATEGORIES.find(c => c.id === selectedCategoryId) : null;
 
@@ -80,6 +91,7 @@ export function MindMapView() {
             key={`detail-${selectedCategoryId}`}
             category={activeCategory}
             onBack={() => setSelectedCategoryId(null)}
+            onPracticeCommand={handlePracticeCommand}
           />
         ) : (
           <motion.div

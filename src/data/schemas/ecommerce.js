@@ -7,6 +7,57 @@ export const SCHEMA_ECOMMERCE = {
   id: 'tienda_online',
   name: 'Plataforma E-Commerce Global',
   description: 'Esquema relacional con clientes, productos, pedidos, detalles de venta e inventario.',
+  tables: [
+    {
+      name: 'clientes',
+      fields: [
+        ['id_cliente (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['email', 'TEXT'],
+        ['pais', 'TEXT'],
+        ['saldo', 'REAL']
+      ]
+    },
+    {
+      name: 'productos',
+      fields: [
+        ['id_producto (PK)', 'INTEGER'],
+        ['nombre_producto', 'TEXT'],
+        ['categoria', 'TEXT'],
+        ['precio', 'REAL'],
+        ['stock', 'INTEGER']
+      ]
+    },
+    {
+      name: 'pedidos',
+      fields: [
+        ['id_pedido (PK)', 'INTEGER'],
+        ['id_cliente (FK)', 'INTEGER'],
+        ['fecha_pedido', 'DATE'],
+        ['monto_total', 'REAL']
+      ]
+    },
+    {
+      name: 'detalles_pedido',
+      fields: [
+        ['id_detalle (PK)', 'INTEGER'],
+        ['id_pedido (FK)', 'INTEGER'],
+        ['id_producto (FK)', 'INTEGER'],
+        ['cantidad', 'INTEGER'],
+        ['precio_unitario', 'REAL']
+      ]
+    },
+    {
+      name: 'auditoria_stock',
+      fields: [
+        ['id_auditoria (PK)', 'INTEGER'],
+        ['id_producto (FK)', 'INTEGER'],
+        ['stock_anterior', 'INTEGER'],
+        ['stock_nuevo', 'INTEGER'],
+        ['fecha_modificacion', 'DATETIME']
+      ]
+    }
+  ],
   sqlSetup: `
     DROP TABLE IF EXISTS auditoria_stock;
     DROP TABLE IF EXISTS detalles_pedido;

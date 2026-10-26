@@ -19,12 +19,12 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useView } from '../../context/ViewContext.jsx';
-import { useProgress } from '../../context/ProgressContext.jsx';
+import { useUserProgress } from '../../context/ProgressContext.jsx';
 import { Button } from '../common/Button.jsx';
 
 export function HomeOnboardingModal() {
   const { isHomeModalOpen, closeHomeModal, setActiveView } = useView();
-  const { progressPercentage, progress, completedCount, totalLessons } = useProgress();
+  const { progressPercentage, progress, completedCount, totalLessons } = useUserProgress();
 
   const [activeSlide, setActiveSlide] = useState(0);
 

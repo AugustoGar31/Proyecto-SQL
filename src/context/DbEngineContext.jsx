@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { sqlEngine } from '../services/sqlEngineService.js';
-import { useProgress } from './ProgressContext.jsx';
+import { useCurriculum } from './ProgressContext.jsx';
 
 const DbEngineContext = createContext();
 
 export const DbEngineProvider = ({ children }) => {
-  const { currentLesson, activeExercise } = useProgress();
+  const { currentLesson, activeExercise } = useCurriculum();
   const [isReady, setIsReady] = useState(false);
   const [initError, setInitError] = useState(null);
   const [currentSchemaId, setCurrentSchemaId] = useState(null);
@@ -94,12 +94,29 @@ export const DbEngineProvider = ({ children }) => {
     }
   }, [currentSchemaId]);
 
+  /**
+   * Cambia manualmente el esquema activo de la base de datos y ejecuta el seeding.
+   * @param {string} schemaId - Identificador del esquema ('universidad', 'tienda_online', 'banco')
+   */
+  const switchSchema = useCallback((schemaId) => {
+    if (!schemaId) return false;
+    try {
+      sqlEngine.loadSchema(schemaId);
+      setCurrentSchemaId(schemaId);
+      return true;
+    } catch (err) {
+      console.error(`[DbEngineContext] Error al cambiar a esquema '${schemaId}':`, err);
+      return false;
+    }
+  }, []);
+
   const contextValue = useMemo(() => ({
     isReady,
     initError,
     currentSchemaId,
     runQuery,
     resetCurrentSchema,
+    switchSchema,
     retryInitialization
   }), [
     isReady,
@@ -107,6 +124,7 @@ export const DbEngineProvider = ({ children }) => {
     currentSchemaId,
     runQuery,
     resetCurrentSchema,
+    switchSchema,
     retryInitialization
   ]);
 
@@ -117,4 +135,10 @@ export const DbEngineProvider = ({ children }) => {
   );
 };
 
-export const useDbEngine = () => useContext(DbEngineContext);
+export const useDbEngine = () => {
+  const context = useContext(DbEngineContext);
+  if (!context) {
+    throw new Error('useDbEngine debe utilizarse dentro de un DbEngineProvider');
+  }
+  return context;
+};

@@ -5,7 +5,7 @@
  * - Nivel 2 (Directa): Desglose de los pasos lógicos sin mostrar código SQL.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, Compass, Lock, Unlock } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
@@ -14,25 +14,33 @@ export function TieredHintsPanel({ hints }) {
   // Estado de desbloqueo: 0 = ninguna, 1 = Pista 1 visible, 2 = Ambas pistas visibles
   const [unlockedLevel, setUnlockedLevel] = useState(0);
 
-  if (!hints || hints.length === 0) return null;
+  // Reiniciar estado de pistas si cambia la referencia o conjunto de pistas
+  useEffect(() => {
+    setUnlockedLevel(0);
+  }, [hints]);
 
   // Garantizar compatibilidad y forzar estrictamente un máximo de 2 niveles conceptuales
-  const normalizedHints = hints.slice(0, 2).map((h, i) => {
-    if (typeof h === 'string') {
+  const normalizedHints = useMemo(() => {
+    if (!hints || hints.length === 0) return [];
+    return hints.slice(0, 2).map((h, i) => {
+      if (typeof h === 'string') {
+        return {
+          level: i + 1,
+          type: i === 0 ? 'indirect' : 'direct',
+          title: i === 0 ? 'Pista 1 • Indirecta (Enfoque)' : 'Pista 2 • Directa (Pasos Lógicos)',
+          content: h
+        };
+      }
       return {
         level: i + 1,
         type: i === 0 ? 'indirect' : 'direct',
-        title: i === 0 ? 'Pista 1 • Indirecta (Enfoque)' : 'Pista 2 • Directa (Pasos Lógicos)',
-        content: h
+        title: h.title || (i === 0 ? 'Pista 1 • Indirecta (Enfoque)' : 'Pista 2 • Directa (Pasos Lógicos)'),
+        content: h.content
       };
-    }
-    return {
-      level: i + 1,
-      type: i === 0 ? 'indirect' : 'direct',
-      title: h.title || (i === 0 ? 'Pista 1 • Indirecta (Enfoque)' : 'Pista 2 • Directa (Pasos Lógicos)'),
-      content: h.content
-    };
-  });
+    });
+  }, [hints]);
+
+  if (!hints || hints.length === 0) return null;
 
   const handleUnlockLevel = (targetLevel) => {
     setUnlockedLevel((prev) => Math.max(prev, targetLevel));

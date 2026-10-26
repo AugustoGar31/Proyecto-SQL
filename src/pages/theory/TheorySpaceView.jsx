@@ -8,10 +8,10 @@ import React from 'react';
 import { LearningPlaybooksSidebar } from '../../components/layout/LearningPlaybooksSidebar.jsx';
 import { LessonContent } from '../../components/theory/LessonContent.jsx';
 import { ModuleZeroView } from '../../components/theory/moduleZero/ModuleZeroView.jsx';
-import { useProgress } from '../../context/ProgressContext.jsx';
+import { useCurriculum } from '../../context/ProgressContext.jsx';
 
 export function TheorySpaceView() {
-  const { currentLesson, activeModuleId } = useProgress();
+  const { currentLesson, activeModuleId } = useCurriculum();
 
   const isModuleZero = activeModuleId === 'mod-0-intro' || (currentLesson && currentLesson.id.startsWith('les-m0'));
 

@@ -6,6 +6,7 @@
 @import './theme.css';
 @import './glassmorphism.css';
 @import './mindmap.css';
+@import './theory.css';
 
 /* Layout Principal de la App */
 .app-container {

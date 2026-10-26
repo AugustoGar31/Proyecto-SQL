@@ -7,6 +7,27 @@ export const SCHEMA_BANCO = {
   id: 'banco',
   name: 'Sistema Bancario y Financiero',
   description: 'Esquema diseñado para simular transferencias atómicas, aislamiento ACID y registros en diario (WAL).',
+  tables: [
+    {
+      name: 'cuentas_bancarias',
+      fields: [
+        ['id_cuenta (PK)', 'INTEGER'],
+        ['titular', 'TEXT'],
+        ['tipo_cuenta', 'TEXT'],
+        ['saldo', 'REAL']
+      ]
+    },
+    {
+      name: 'transacciones_log',
+      fields: [
+        ['id_log (PK)', 'INTEGER'],
+        ['id_origen (FK)', 'INTEGER'],
+        ['id_destino (FK)', 'INTEGER'],
+        ['monto', 'REAL'],
+        ['fecha', 'DATETIME']
+      ]
+    }
+  ],
   sqlSetup: `
     DROP TABLE IF EXISTS transacciones_log;
     DROP TABLE IF EXISTS cuentas_bancarias;

@@ -4,11 +4,9 @@
  * Muestra la descripción completa, el listado de comandos y la navegación de regreso al mapa principal.
  */
 
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Terminal, Sparkles, Database } from 'lucide-react';
-import { useProgress } from '../../context/ProgressContext.jsx';
-import { useView } from '../../context/ViewContext.jsx';
 
 // Variantes de animación para Framer Motion (estáticas)
 const CONTAINER_VARIANTS = {
@@ -36,16 +34,11 @@ const ITEM_VARIANTS = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
 };
 
-export const CategoryDetailView = memo(function CategoryDetailView({ category, onBack }) {
-  const { selectLesson } = useProgress();
-  const { setActiveView } = useView();
-
-  const handlePracticeCommand = useCallback((lessonId) => {
-    if (lessonId) {
-      selectLesson(lessonId);
-      setActiveView('playground');
-    }
-  }, [selectLesson, setActiveView]);
+export const CategoryDetailView = memo(function CategoryDetailView({
+  category,
+  onBack,
+  onPracticeCommand
+}) {
 
   if (!category) return null;
 
@@ -141,7 +134,7 @@ export const CategoryDetailView = memo(function CategoryDetailView({ category, o
                 </code>
                 {cmd.lessonId && (
                   <button
-                    onClick={() => handlePracticeCommand(cmd.lessonId)}
+                    onClick={() => onPracticeCommand && onPracticeCommand(cmd.lessonId)}
                     className="btn-command-practice"
                     title="Ir a practicar este comando"
                   >

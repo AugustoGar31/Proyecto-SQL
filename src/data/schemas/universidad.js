@@ -7,6 +7,105 @@ export const SCHEMA_UNIVERSIDAD = {
   id: 'universidad',
   name: 'Gestión Académica Universitaria (NexoSQL)',
   description: 'Esquema relacional integral con departamentos, carreras, asignaturas, docentes, aulas, comisiones, exámenes y actas de notas.',
+  tables: [
+    {
+      name: 'estudiantes',
+      fields: [
+        ['id_estudiante (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['carrera', 'TEXT'],
+        ['promedio', 'REAL'],
+        ['fecha_ingreso', 'DATE']
+      ]
+    },
+    {
+      name: 'profesores',
+      fields: [
+        ['id_profesor (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['departamento', 'TEXT'],
+        ['email', 'TEXT']
+      ]
+    },
+    {
+      name: 'cursos',
+      fields: [
+        ['id_curso (PK)', 'INTEGER'],
+        ['nombre_curso', 'TEXT'],
+        ['creditos', 'INTEGER'],
+        ['id_profesor (FK)', 'INTEGER']
+      ]
+    },
+    {
+      name: 'inscripciones',
+      fields: [
+        ['id_inscripcion (PK)', 'INTEGER'],
+        ['id_alumno (FK)', 'INTEGER'],
+        ['id_comision (FK)', 'INTEGER'],
+        ['id_estudiante (FK)', 'INTEGER'],
+        ['id_curso (FK)', 'INTEGER'],
+        ['nota_final', 'REAL']
+      ]
+    },
+    {
+      name: 'departamentos',
+      fields: [
+        ['id_departamento (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['presupuesto', 'REAL']
+      ]
+    },
+    {
+      name: 'alumnos',
+      fields: [
+        ['id_alumno (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['apellido', 'TEXT'],
+        ['email', 'TEXT'],
+        ['dni', 'TEXT'],
+        ['fecha_ingreso', 'DATE']
+      ]
+    },
+    {
+      name: 'carreras',
+      fields: [
+        ['id_carrera (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['titulo', 'TEXT'],
+        ['duracion', 'INTEGER'],
+        ['id_departamento (FK)', 'INTEGER']
+      ]
+    },
+    {
+      name: 'docentes',
+      fields: [
+        ['id_docente (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['apellido', 'TEXT'],
+        ['salario_base', 'REAL'],
+        ['id_departamento (FK)', 'INTEGER']
+      ]
+    },
+    {
+      name: 'asignaturas',
+      fields: [
+        ['id_asignatura (PK)', 'INTEGER'],
+        ['nombre', 'TEXT'],
+        ['creditos', 'INTEGER'],
+        ['id_departamento (FK)', 'INTEGER']
+      ]
+    },
+    {
+      name: 'comisiones',
+      fields: [
+        ['id_comision (PK)', 'INTEGER'],
+        ['id_asignatura (FK)', 'INTEGER'],
+        ['id_docente (FK)', 'INTEGER'],
+        ['cupo', 'INTEGER'],
+        ['tipo_comision', 'TEXT']
+      ]
+    }
+  ],
   sqlSetup: `
     -- Limpieza previa
     DROP TABLE IF EXISTS notas;

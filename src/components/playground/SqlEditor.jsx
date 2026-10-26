@@ -7,6 +7,7 @@
 import React, { memo } from 'react';
 import { Play, RotateCcw, Copy, Check } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
+import { useClipboard } from '../../hooks/useClipboard.js';
 
 export const STRICT_SQL_TEMPLATE = `-- Escribe tu consulta aquí\nSELECT `;
 export const FIXED_SQL_TEMPLATE = STRICT_SQL_TEMPLATE;
@@ -19,7 +20,7 @@ export const SqlEditor = memo(function SqlEditor({
   placeholder = FIXED_SQL_TEMPLATE
 }) {
   const [internalCode, setInternalCode] = React.useState(value);
-  const [copied, setCopied] = React.useState(false);
+  const { copied, copy } = useClipboard(1500);
 
   // Sincronizar buffer solo si la prop externa 'value' cambia de referencia o reset
   React.useEffect(() => {
@@ -58,9 +59,7 @@ export const SqlEditor = memo(function SqlEditor({
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(internalCode || '');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    copy(internalCode || '');
   };
 
   return (

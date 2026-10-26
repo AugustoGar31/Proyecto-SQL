@@ -6,10 +6,10 @@
 import React from 'react';
 import { Trophy } from 'lucide-react';
 import { ViewSelector } from './ViewSelector.jsx';
-import { useProgress } from '../../context/ProgressContext.jsx';
+import { useUserProgress } from '../../context/ProgressContext.jsx';
 
 export function Navbar() {
-  const { progressPercentage, progress } = useProgress();
+  const { progressPercentage, progress } = useUserProgress();
 
   return (
     <header className="navbar-header">

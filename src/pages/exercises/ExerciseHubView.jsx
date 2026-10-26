@@ -5,11 +5,10 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { MODULES_DATA } from '../../data/curriculum/index.js';
-import { KATAS_CATALOG } from '../../data/katasData.js';
-import { THEMATIC_PLAYBOOKS } from '../../data/playbooksData.js';
-import { useProgress } from '../../context/ProgressContext.jsx';
+import { useCurriculum, useUserProgress } from '../../context/ProgressContext.jsx';
 import { useView } from '../../context/ViewContext.jsx';
+import { useDebounce } from '../../hooks/useDebounce.js';
+import { useExerciseCatalog } from '../../hooks/useExerciseCatalog.js';
 import { NextLessonWidget } from '../../components/common/NextLessonWidget.jsx';
 import { PlaybooksCardGrid } from '../../components/exercises/PlaybooksCardGrid.jsx';
 import { KatasSubGrid } from '../../components/exercises/KatasSubGrid.jsx';
@@ -17,104 +16,20 @@ import { Button } from '../../components/common/Button.jsx';
 import { Search, LayoutGrid } from 'lucide-react';
 
 export function ExerciseHubView() {
-  const {
-    selectExercise,
-    progress,
-    activeExerciseId,
-    isPlaybookUnlocked,
-    getPlaybookStats
-  } = useProgress();
+  const { selectExercise, activeExerciseId } = useCurriculum();
+  const { progress } = useUserProgress();
   const { setActiveView } = useView();
 
   const [selectedPlaybookId, setSelectedPlaybookId] = useState(null);
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'COMPLETED' | 'PENDING'
   const [searchInput, setSearchInput] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debouncedSearch = useDebounce(searchInput, 150);
 
-  // Debounce ligero para el buscador
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchInput);
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [searchInput]);
-
-  // Unificar ejercicios y clasificarlos jerárquicamente por Libreto Temático
-  const playbooksWithKatas = useMemo(() => {
-    // 1. Obtener ejercicios curriculares con metadata
-    const fromCurriculum = MODULES_DATA.flatMap(m =>
-      (m.lessons || []).flatMap(l =>
-        (l.exercises || []).map(ex => ({
-          ...ex,
-          moduleId: m.id,
-          category: ex.category || (m.categoryCode || 'DQL'),
-          moduleTitle: m.title,
-          lessonId: l.id,
-          lessonTitle: l.title,
-          schemaId: l.schemaId || ex.schemaId || 'universidad'
-        }))
-      )
-    );
-
-    const seenIds = new Set(fromCurriculum.map(k => k.id));
-
-    // 2. Mapear Katas independientes al libreto temático correspondiente según su categoría y módulo
-    const standaloneKatas = KATAS_CATALOG.filter(k => !seenIds.has(k.id)).map(k => {
-      let targetModuleId = 'mod-1-dql';
-      if (k.moduleId) {
-        targetModuleId = k.moduleId;
-      } else {
-        if (k.category === 'DML') targetModuleId = 'mod-6-dml';
-        if (k.category === 'DDL') targetModuleId = 'mod-7-ddl';
-        if (k.category === 'TCL') targetModuleId = 'mod-10-transactions';
-        if (k.category === 'PROCEDURAL') targetModuleId = 'mod-9-procedural';
-      }
-
-      return {
-        ...k,
-        moduleId: targetModuleId,
-        moduleTitle: `Kata: ${k.category}`,
-        lessonTitle: `Kata Práctica (${k.category})`,
-        schemaId: k.schemaId || 'universidad'
-      };
-    });
-
-    const allExercises = [...fromCurriculum, ...standaloneKatas];
-
-    // 3. Agrupar por los 10 Libretos Temáticos oficiales
-    return THEMATIC_PLAYBOOKS.map((pb) => {
-      const isUnlocked = isPlaybookUnlocked(pb.id);
-      const stats = getPlaybookStats(pb.id);
-
-      const pbExercises = allExercises.filter(ex => ex.moduleId === pb.moduleId);
-
-      // Aplicar filtros de búsqueda y estado
-      const filteredExercises = pbExercises.filter(ex => {
-        const isDone = progress.completedExercises.includes(ex.id);
-
-        if (statusFilter === 'COMPLETED' && !isDone) return false;
-        if (statusFilter === 'PENDING' && isDone) return false;
-
-        if (debouncedSearch.trim()) {
-          const q = debouncedSearch.toLowerCase();
-          const matchesTitle = ex.title.toLowerCase().includes(q);
-          const matchesPrompt = (ex.prompt || '').toLowerCase().includes(q);
-          const matchesDept = ex.businessCase?.department?.toLowerCase().includes(q);
-          if (!matchesTitle && !matchesPrompt && !matchesDept) return false;
-        }
-
-        return true;
-      });
-
-      return {
-        ...pb,
-        isUnlocked,
-        stats,
-        totalItems: pbExercises.length,
-        items: filteredExercises
-      };
-    });
-  }, [isPlaybookUnlocked, getPlaybookStats, statusFilter, debouncedSearch, progress.completedExercises]);
+  // Hook desacoplado con la lógica de clasificación y filtrado del catálogo
+  const { playbooksWithKatas } = useExerciseCatalog({
+    statusFilter,
+    searchQuery: debouncedSearch
+  });
 
   // Libreto enfocado actualmente
   const activeSelectedPlaybook = useMemo(() => {
