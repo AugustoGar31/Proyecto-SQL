@@ -18,7 +18,7 @@
 
 -  **Porcentajes generales y por módulo**: Medir bien el porsentaje de completado total contando todas las actividades que hay por que no las cuenta a todas ya que a futuro seguro agregue mas!!! 
 
----
+--------------------------------------------------------------------------------------------------------
 
 ## 🧪 5. Pruebas de Calidad, Resiliencia y Rendimiento
 

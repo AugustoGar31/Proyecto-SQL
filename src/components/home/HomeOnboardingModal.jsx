@@ -24,7 +24,7 @@ import { Button } from '../common/Button.jsx';
 
 export function HomeOnboardingModal() {
   const { isHomeModalOpen, closeHomeModal, setActiveView } = useView();
-  const { progressPercentage, progress, completedCount, totalLessons } = useUserProgress();
+  const { progressPercentage, progress, completedCount, totalLessons, totalKatas } = useUserProgress();
 
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -421,6 +421,7 @@ export function HomeOnboardingModal() {
                       <strong style={{ fontSize: '1.05rem', color: 'var(--accent-amber)' }}>
                         {progress.completedExercises ? progress.completedExercises.length : 0}
                       </strong>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}> / {totalKatas || 0}</span>
                     </div>
                   </div>
                 </div>

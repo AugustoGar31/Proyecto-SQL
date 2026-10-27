@@ -40,19 +40,24 @@ function extractTablesFromSql(sql) {
   return tables;
 }
 
-export const ERDDiagram = memo(function ERDDiagram({ schemaId }) {
+export const ERDDiagram = memo(function ERDDiagram({ schemaId, schema: schemaProp }) {
   const { currentSchemaId } = useDbEngine();
-  const schemaKey = schemaId || currentSchemaId || 'universidad';
+  const schemaKey = schemaId || schemaProp || currentSchemaId || 'universidad';
   const schema = SAMPLE_SCHEMAS[schemaKey] || SAMPLE_SCHEMAS['universidad'];
   const tables = (schema && schema.tables) ? schema.tables : extractTablesFromSql(schema?.sqlSetup);
 
   return (
     <div className="glass-card" style={{ padding: '1.25rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
-        <Database size={20} />
-        <h3 style={{ fontSize: '1.05rem', color: '#ffffff', margin: 0 }}>
-          Diagrama ERD del Esquema: <span style={{ color: 'var(--accent-cyan)' }}>{schema.name}</span>
-        </h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}>
+          <Database size={20} />
+          <h3 style={{ fontSize: '1.05rem', color: '#ffffff', margin: 0 }}>
+            Diagrama ERD del Esquema: <span style={{ color: 'var(--accent-cyan)' }}>{schema.name}</span>
+          </h3>
+        </div>
+        <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>
+          🔒 Esquema Contextual Fijo
+        </span>
       </div>
 
       <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>

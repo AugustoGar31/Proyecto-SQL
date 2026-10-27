@@ -249,12 +249,28 @@ export const ProgressProvider = ({ children }) => {
     };
   }, [isPlaybookUnlocked, progress.completedLessons]);
 
+  // Cálculo dinámico del catálogo global: lecciones curriculares + katas independientes
   const totalLessons = useMemo(() => MODULES_DATA.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0), []);
+
+  const totalKatas = useMemo(() => {
+    const fromCurriculum = MODULES_DATA.flatMap(m =>
+      (m.lessons || []).flatMap(l => l.exercises || [])
+    );
+    const seenIds = new Set(fromCurriculum.map(k => k.id));
+    const standaloneKatas = KATAS_CATALOG.filter(k => !seenIds.has(k.id));
+    return fromCurriculum.length + standaloneKatas.length;
+  }, []);
+
+  const totalGlobalActivities = useMemo(() => totalLessons + totalKatas, [totalLessons, totalKatas]);
+
   const completedCount = progress.completedLessons.length;
+  const completedKatasCount = progress.completedExercises ? progress.completedExercises.length : 0;
+  const totalCompletedActivities = completedCount + completedKatasCount;
+
   const progressPercentage = useMemo(() => {
-    if (totalLessons === 0) return 0;
-    return Math.min(100, Math.round((completedCount / totalLessons) * 100));
-  }, [completedCount, totalLessons]);
+    if (totalGlobalActivities === 0) return 0;
+    return Math.min(100, Math.round((totalCompletedActivities / totalGlobalActivities) * 100));
+  }, [totalCompletedActivities, totalGlobalActivities]);
 
   // Context Values memoizados independientemente para evitar re-renderizados cruzados
   const curriculumValue = useMemo(() => ({
@@ -290,7 +306,11 @@ export const ProgressProvider = ({ children }) => {
     thematicPlaybooks: THEMATIC_PLAYBOOKS,
     progressPercentage,
     completedCount,
-    totalLessons
+    totalLessons,
+    totalKatas,
+    totalGlobalActivities,
+    totalCompletedActivities,
+    completedKatasCount
   }), [
     progress,
     completeExercise,
@@ -303,7 +323,11 @@ export const ProgressProvider = ({ children }) => {
     nextRecommendedLesson,
     progressPercentage,
     completedCount,
-    totalLessons
+    totalLessons,
+    totalKatas,
+    totalGlobalActivities,
+    totalCompletedActivities,
+    completedKatasCount
   ]);
 
   return (

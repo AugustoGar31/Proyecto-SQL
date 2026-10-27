@@ -52,6 +52,21 @@ export function WorkspaceView() {
     }
   }, [activeExercise]);
 
+  // Regla de Esquema Fijo: Forzar 'universidad' en Playground y restaurar el esquema de la kata/lección activa
+  useEffect(() => {
+    if (!isReady || !switchSchema) return;
+    if (isPlaygroundMode) {
+      if (currentSchemaId !== 'universidad') {
+        switchSchema('universidad');
+      }
+    } else {
+      const targetSchema = activeExercise?.schemaId || activeExercise?.schema || currentLesson?.schemaId || 'universidad';
+      if (currentSchemaId !== targetSchema) {
+        switchSchema(targetSchema);
+      }
+    }
+  }, [isPlaygroundMode, isReady, activeExercise, currentLesson, switchSchema, currentSchemaId]);
+
   const handleExecuteSql = useCallback((sqlText) => {
     const code = typeof sqlText === 'string' ? sqlText : editorSqlRef.current;
     if (!code || !code.trim()) return;
@@ -124,30 +139,6 @@ export function WorkspaceView() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          {isPlaygroundMode && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>Base de Datos:</span>
-              <select
-                value={currentSchemaId || 'universidad'}
-                onChange={(e) => switchSchema && switchSchema(e.target.value)}
-                style={{
-                  padding: '0.35rem 0.65rem',
-                  fontSize: '0.82rem',
-                  color: '#ffffff',
-                  background: 'rgba(15, 23, 42, 0.85)',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border-subtle)',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                <option value="universidad">🎓 Universidad</option>
-                <option value="tienda_online">🛍️ E-Commerce</option>
-                <option value="banco">🏦 Banco</option>
-              </select>
-            </div>
-          )}
-
           <Button
             variant="secondary"
             size="md"
@@ -169,10 +160,16 @@ export function WorkspaceView() {
         </div>
       </div>
 
-      {/* Visor ERD Colapsable */}
+      {/* Visor ERD Colapsable con Esquema Fijo Contextual */}
       {showErd && (
         <div style={{ marginBottom: '1.5rem' }}>
-          <ERDDiagram />
+          <ERDDiagram
+            schemaId={
+              isPlaygroundMode
+                ? 'universidad'
+                : (activeExercise?.schemaId || activeExercise?.schema || currentLesson?.schemaId || 'universidad')
+            }
+          />
         </div>
       )}
 
