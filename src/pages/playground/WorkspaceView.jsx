@@ -185,18 +185,17 @@ export function WorkspaceView() {
         <div className="glass-card" style={{ padding: '1.25rem' }}>
           {/* Selector de Pestañas */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="card-tab-nav">
               <button
                 onClick={() => setPlaygroundTab('editor')}
-                className={`tab-btn ${playgroundTab === 'editor' ? 'active' : ''}`}
+                className={`card-tab-btn ${playgroundTab === 'editor' ? 'active tab-cyan' : ''}`}
               >
                 <Terminal size={16} />
                 Editor & Resultados
               </button>
               <button
                 onClick={() => setPlaygroundTab('internals')}
-                className={`tab-btn ${playgroundTab === 'internals' ? 'active' : ''}`}
-                style={{ background: playgroundTab === 'internals' ? 'var(--accent-indigo)' : 'transparent' }}
+                className={`card-tab-btn ${playgroundTab === 'internals' ? 'active tab-indigo' : ''}`}
               >
                 <BookOpen size={16} />
                 Explicación Lógica
@@ -248,21 +247,22 @@ export function WorkspaceView() {
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               {/* Selector de Pestañas */}
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
-                <button
-                  onClick={() => setActiveTab('editor')}
-                  className={`tab-btn ${activeTab === 'editor' ? 'active' : ''}`}
-                >
-                  <Terminal size={16} />
-                  Editor & Resultados
-                </button>
-                <button
-                  onClick={() => setActiveTab('internals')}
-                  className={`tab-btn ${activeTab === 'internals' ? 'active' : ''}`}
-                  style={{ background: activeTab === 'internals' ? 'var(--accent-indigo)' : 'transparent' }}
-                >
-                  <BookOpen size={16} />
-                  Explicación Lógica
-                </button>
+                <div className="card-tab-nav">
+                  <button
+                    onClick={() => setActiveTab('editor')}
+                    className={`card-tab-btn ${activeTab === 'editor' ? 'active tab-cyan' : ''}`}
+                  >
+                    <Terminal size={16} />
+                    Editor & Resultados
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('internals')}
+                    className={`card-tab-btn ${activeTab === 'internals' ? 'active tab-indigo' : ''}`}
+                  >
+                    <BookOpen size={16} />
+                    Explicación Lógica
+                  </button>
+                </div>
               </div>
 
               {/* Vista 1: Editor y Salida Tabular */}

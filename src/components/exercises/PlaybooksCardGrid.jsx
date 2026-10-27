@@ -87,9 +87,22 @@ export function PlaybooksCardGrid({ playbooks, onSelectPlaybook, selectedPlayboo
                   {isUnlocked ? <Icon size={22} /> : <Lock size={20} />}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                   <span className={`badge ${pb.badgeClass}`} style={{ fontSize: '0.72rem', fontWeight: 700 }}>
                     {pb.code}
+                  </span>
+                  <span
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: 'var(--text-secondary)',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      padding: '0.15rem 0.45rem',
+                      borderRadius: 'var(--radius-full)'
+                    }}
+                  >
+                    {stats.total} {stats.total === 1 ? 'Actividad' : 'Actividades'}
                   </span>
                   {stats.isCompleted && (
                     <span
@@ -162,7 +175,7 @@ export function PlaybooksCardGrid({ playbooks, onSelectPlaybook, selectedPlayboo
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.76rem', marginBottom: '0.4rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Avance en el Libreto</span>
                     <span style={{ color: pb.color, fontWeight: 700 }}>
-                      {stats.completed} / {stats.total} Lecciones ({stats.percentage}%)
+                      {stats.completed} / {stats.total} {stats.total === 1 ? 'Actividad' : 'Actividades'} ({stats.percentage}%)
                     </span>
                   </div>
 

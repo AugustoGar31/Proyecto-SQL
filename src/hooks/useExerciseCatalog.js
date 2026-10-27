@@ -11,7 +11,7 @@ import { useUserProgress } from '../context/ProgressContext.jsx';
  * @param {string} options.searchQuery - Cadena de búsqueda (generalmente debounced)
  */
 export function useExerciseCatalog({ statusFilter = 'ALL', searchQuery = '' } = {}) {
-  const { isPlaybookUnlocked, getPlaybookStats, progress } = useUserProgress();
+  const { isPlaybookUnlocked, progress } = useUserProgress();
 
   const playbooksWithKatas = useMemo(() => {
     // 1. Obtener ejercicios curriculares con metadata
@@ -57,9 +57,20 @@ export function useExerciseCatalog({ statusFilter = 'ALL', searchQuery = '' } = 
     // 3. Agrupar por los 10 Libretos Temáticos oficiales
     return THEMATIC_PLAYBOOKS.map((pb) => {
       const isUnlocked = isPlaybookUnlocked(pb.id);
-      const stats = getPlaybookStats(pb.id);
-
       const pbExercises = allExercises.filter(ex => ex.moduleId === pb.moduleId);
+
+      // Métricas reales basadas en todas las actividades/katas del libreto
+      const totalActivities = pbExercises.length;
+      const completedActivities = pbExercises.filter(ex => progress.completedExercises.includes(ex.id)).length;
+      const percentage = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
+      const isCompleted = totalActivities > 0 && completedActivities === totalActivities;
+
+      const stats = {
+        total: totalActivities,
+        completed: completedActivities,
+        percentage,
+        isCompleted
+      };
 
       // Aplicar filtros de búsqueda y estado
       const filteredExercises = pbExercises.filter(ex => {
@@ -87,7 +98,7 @@ export function useExerciseCatalog({ statusFilter = 'ALL', searchQuery = '' } = 
         items: filteredExercises
       };
     });
-  }, [isPlaybookUnlocked, getPlaybookStats, statusFilter, searchQuery, progress.completedExercises]);
+  }, [isPlaybookUnlocked, statusFilter, searchQuery, progress.completedExercises]);
 
   return { playbooksWithKatas };
 }

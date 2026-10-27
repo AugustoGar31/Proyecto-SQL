@@ -64,32 +64,24 @@ export function TieredHintsPanel({ hints }) {
           gap: '0.5rem'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-amber)', fontSize: '0.88rem', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-amber)', fontSize: '0.88rem', fontWeight: 600 }}>
           <Lightbulb size={16} />
-          <span>Pistas Conceptuales ({unlockedLevel}/2 Reveladas)</span>
+          <span>Pistas Conceptuales</span>
+          <span className="badge badge-amber" style={{ fontSize: '0.72rem', padding: '0.15rem 0.5rem' }}>
+            {unlockedLevel}/2 Reveladas
+          </span>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          {unlockedLevel === 0 ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => handleUnlockLevel(1)}
-              icon={Unlock}
-              style={{ color: 'var(--accent-amber)', borderColor: 'rgba(245, 158, 11, 0.3)' }}
-            >
-              Revelar Pista 1 (Indirecta)
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleHide}
-            >
-              Ocultar Pistas
-            </Button>
-          )}
-        </div>
+        {unlockedLevel > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleHide}
+            style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}
+          >
+            Ocultar Pistas
+          </Button>
+        )}
       </div>
 
       {/* Lista de las 2 Pistas */}
@@ -130,7 +122,11 @@ export function TieredHintsPanel({ hints }) {
                     size="sm"
                     onClick={() => handleUnlockLevel(levelNum)}
                     icon={Lock}
-                    style={{ color: accentColor, borderColor: 'rgba(255, 255, 255, 0.1)' }}
+                    style={{
+                      color: accentColor,
+                      borderColor: isLevel1 ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)',
+                      background: isLevel1 ? 'rgba(245, 158, 11, 0.05)' : 'rgba(6, 182, 212, 0.05)'
+                    }}
                   >
                     Desbloquear Pista {levelNum}
                   </Button>

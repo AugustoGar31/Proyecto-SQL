@@ -1,14 +1,3 @@
-/**
- * @file App.jsx
- * @description Layout principal y Router de Espacios de Trabajo de SQL Master.
- * Elimina la pantalla monolítica saturada ("todo junto") reemplazándola por 5 espacios desacoplados:
- * 1. 🎓 'theory': Teoría & Plan de Estudio
- * 2. 💻 'playground': Taller Práctico SQL
- * 3. 🧠 'mindmap': Mapa Mental Dinámico e Interactivo (SVG/React)
- * 4. 🏋️ 'exercises': Catálogo de Katas (LeetCode style)
- * 5. 📊 'schema': Explorador de Arquitectura & ERD
- */
-
 import React, { useState, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Navbar } from './components/layout/Navbar.jsx';
@@ -35,6 +24,8 @@ function ViewLoadingFallback() {
     </div>
   );
 }
+
+import { AITutorWidget } from './features/ai-tutor';
 
 function MainLayout() {
   const { activeView } = useView();
@@ -67,6 +58,9 @@ function MainLayout() {
           </Suspense>
         </ErrorBoundary>
       </main>
+
+      {/* Asistente Inteligente Flotante Desacoplado */}
+      <AITutorWidget />
     </div>
   );
 }

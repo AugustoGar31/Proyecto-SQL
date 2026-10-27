@@ -7,6 +7,7 @@
 import initSqlJs from 'sql.js';
 import sqlWasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 import { SAMPLE_SCHEMAS } from '../data/schemas/index.js';
+import { handleAITutorError } from '../features/ai-tutor/index.js';
 
 export class SqlEngineService {
   constructor() {
@@ -165,6 +166,9 @@ export class SqlEngineService {
       const endTime = performance.now();
       const rawErrorMsg = error ? (error.message || String(error)) : 'Error de sintaxis o ejecución SQL.';
       const formattedError = this._formatSqlError(rawErrorMsg);
+
+      // Notificación desacoplada al tutor socrático en segundo plano
+      handleAITutorError({ error: rawErrorMsg, query, schemaId: this.currentSchemaId });
 
       return {
         success: false,

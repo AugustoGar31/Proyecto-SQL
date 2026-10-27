@@ -8,6 +8,7 @@ import React, { memo } from 'react';
 import { Play, RotateCcw, Copy, Check } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
 import { useClipboard } from '../../hooks/useClipboard.js';
+import { OptimizeQueryButton } from '../../features/ai-tutor';
 
 export const STRICT_SQL_TEMPLATE = `-- Escribe tu consulta aquí\nSELECT `;
 export const FIXED_SQL_TEMPLATE = STRICT_SQL_TEMPLATE;
@@ -75,7 +76,9 @@ export const SqlEditor = memo(function SqlEditor({
           </span>
         </div>
         
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <OptimizeQueryButton query={internalCode} />
+
           <Button
             variant="ghost"
             size="sm"

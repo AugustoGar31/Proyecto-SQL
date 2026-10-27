@@ -86,7 +86,7 @@ export function KatasSubGrid({
               fontWeight: 600
             }}
           >
-            {stats.completed} de {stats.total} Superadas ({stats.percentage}%)
+            {stats.completed} de {stats.total} Actividades Superadas ({stats.percentage}%)
           </span>
         </div>
       </div>
