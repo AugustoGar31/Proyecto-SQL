@@ -26,7 +26,7 @@ export const DbEngineProvider = ({ children }) => {
         const targetSchema = (activeExercise && activeExercise.schemaId) || (currentLesson && currentLesson.schemaId) || 'universidad';
 
         // 3. Ejecutar Seeding de datos inmediato (CREATE TABLE + INSERTs)
-        sqlEngine.seedDatabase(targetSchema);
+        await sqlEngine.seedDatabase(targetSchema);
 
         if (isMounted) {
           setCurrentSchemaId(targetSchema);
@@ -47,15 +47,18 @@ export const DbEngineProvider = ({ children }) => {
 
   // Cambio dinámico de esquema relacional cuando cambia el ejercicio activo o la lección
   useEffect(() => {
+    let isCurrent = true;
     const targetSchema = (activeExercise && activeExercise.schemaId) || (currentLesson && currentLesson.schemaId);
     if (isReady && targetSchema && targetSchema !== currentSchemaId) {
-      try {
-        sqlEngine.loadSchema(targetSchema);
-        setCurrentSchemaId(targetSchema);
-      } catch (error) {
-        console.error('Error al cambiar esquema de BD:', error);
-      }
+      sqlEngine.loadSchema(targetSchema)
+        .then(() => {
+          if (isCurrent) setCurrentSchemaId(targetSchema);
+        })
+        .catch((error) => {
+          console.error('Error al cambiar esquema de BD:', error);
+        });
     }
+    return () => { isCurrent = false; };
   }, [isReady, currentLesson, activeExercise, currentSchemaId]);
 
   /**
@@ -67,7 +70,7 @@ export const DbEngineProvider = ({ children }) => {
     try {
       await sqlEngine.initEngine();
       const targetSchema = (currentLesson && currentLesson.schemaId) ? currentLesson.schemaId : 'universidad';
-      sqlEngine.seedDatabase(targetSchema);
+      await sqlEngine.seedDatabase(targetSchema);
       setCurrentSchemaId(targetSchema);
       setIsReady(true);
     } catch (err) {
@@ -78,19 +81,20 @@ export const DbEngineProvider = ({ children }) => {
   }, [currentLesson]);
 
   /**
-   * Ejecuta una consulta SQL en la base de datos actual.
+   * Ejecuta una consulta SQL en la base de datos actual en el Web Worker.
    * @param {string} sqlText - Consulta SQL a ejecutar.
+   * @param {Object} [options] - Opciones como timeoutMs.
    */
-  const runQuery = useCallback((sqlText) => {
-    return sqlEngine.executeQuery(sqlText);
+  const runQuery = useCallback(async (sqlText, options) => {
+    return await sqlEngine.executeQuery(sqlText, options);
   }, []);
 
   /**
    * Reinicia los datos del esquema activo a su estado inicial de fábrica.
    */
-  const resetCurrentSchema = useCallback(() => {
+  const resetCurrentSchema = useCallback(async () => {
     if (currentSchemaId) {
-      sqlEngine.loadSchema(currentSchemaId);
+      return await sqlEngine.loadSchema(currentSchemaId);
     }
   }, [currentSchemaId]);
 
@@ -98,10 +102,10 @@ export const DbEngineProvider = ({ children }) => {
    * Cambia manualmente el esquema activo de la base de datos y ejecuta el seeding.
    * @param {string} schemaId - Identificador del esquema ('universidad', 'tienda_online', 'banco')
    */
-  const switchSchema = useCallback((schemaId) => {
+  const switchSchema = useCallback(async (schemaId) => {
     if (!schemaId) return false;
     try {
-      sqlEngine.loadSchema(schemaId);
+      await sqlEngine.loadSchema(schemaId);
       setCurrentSchemaId(schemaId);
       return true;
     } catch (err) {

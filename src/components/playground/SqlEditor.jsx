@@ -5,7 +5,7 @@
  */
 
 import React, { memo } from 'react';
-import { Play, RotateCcw, Copy, Check } from 'lucide-react';
+import { Play, RotateCcw, Copy, Check, Loader2 } from 'lucide-react';
 import { Button } from '../common/Button.jsx';
 import { useClipboard } from '../../hooks/useClipboard.js';
 import { OptimizeQueryButton } from '../../features/ai-tutor';
@@ -18,6 +18,7 @@ export const SqlEditor = memo(function SqlEditor({
   onChange,
   onExecute,
   onReset,
+  isExecuting = false,
   placeholder = FIXED_SQL_TEMPLATE
 }) {
   const [internalCode, setInternalCode] = React.useState(value);
@@ -130,9 +131,10 @@ export const SqlEditor = memo(function SqlEditor({
           variant="primary"
           size="lg"
           onClick={handleExecute}
-          icon={Play}
+          disabled={isExecuting}
+          icon={isExecuting ? Loader2 : Play}
         >
-          Ejecutar Consulta
+          {isExecuting ? 'Ejecutando en Worker...' : 'Ejecutar Consulta'}
         </Button>
       </div>
     </div>

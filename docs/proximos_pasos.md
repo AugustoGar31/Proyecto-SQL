@@ -17,13 +17,3 @@
   - 🔥 _Speed Coder_ (Resolver una kata en menos de 60 segundos).
 
 -  **Porcentajes generales y por módulo**: Medir bien el porsentaje de completado total contando todas las actividades que hay por que no las cuenta a todas ya que a futuro seguro agregue mas!!! 
-
---------------------------------------------------------------------------------------------------------
-
-## 🧪 5. Pruebas de Calidad, Resiliencia y Rendimiento
-
-### 5.1. Pruebas de Concepto y Suite de Tests Automatizados
-
-- **Tests unitarios del motor evaluador (`exerciseValidator.test.js`)**: Validar comparaciones de matrices, manejo de NULLs, tipos de datos y consultas con orden indistinto.
-- **Tests de integración WASM**: Validar la carga y estabilidad de `sql.js` en diferentes navegadores y condiciones de red lenta.
-- **Pruebas de estrés y seguridad**: Asegurar que consultas infinitas o recursivas no bloqueen el hilo principal de la UI (utilizar Web Workers si es necesario para la ejecución SQL).

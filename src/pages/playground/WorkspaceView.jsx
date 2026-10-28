@@ -34,6 +34,7 @@ export function WorkspaceView() {
   const [queryResult, setQueryResult] = useState(null);
   const [evaluation, setEvaluation] = useState(null);
   const [showErd, setShowErd] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   // Estados del Modo Playground Libre
   const [isPlaygroundMode, setIsPlaygroundMode] = useState(false);
@@ -67,26 +68,36 @@ export function WorkspaceView() {
     }
   }, [isPlaygroundMode, isReady, activeExercise, currentLesson, switchSchema, currentSchemaId]);
 
-  const handleExecuteSql = useCallback((sqlText) => {
+  const handleExecuteSql = useCallback(async (sqlText) => {
     const code = typeof sqlText === 'string' ? sqlText : editorSqlRef.current;
-    if (!code || !code.trim()) return;
-    const res = runQuery(code);
-    setQueryResult(res);
-    if (activeExercise) {
-      const evalRes = ExerciseValidatorService.validate(activeExercise, res);
-      setEvaluation(evalRes);
-      if (evalRes.isPassed) {
-        completeExercise(activeExercise.id);
+    if (!code || !code.trim() || isExecuting) return;
+    setIsExecuting(true);
+    try {
+      const res = await runQuery(code);
+      setQueryResult(res);
+      if (activeExercise) {
+        const evalRes = await ExerciseValidatorService.validate(activeExercise, res);
+        setEvaluation(evalRes);
+        if (evalRes.isPassed) {
+          completeExercise(activeExercise.id);
+        }
       }
+    } finally {
+      setIsExecuting(false);
     }
-  }, [runQuery, activeExercise, completeExercise]);
+  }, [runQuery, activeExercise, completeExercise, isExecuting]);
 
-  const handleExecutePlayground = useCallback((sqlText) => {
+  const handleExecutePlayground = useCallback(async (sqlText) => {
     const code = typeof sqlText === 'string' ? sqlText : playgroundSqlRef.current;
-    if (!code || !code.trim()) return;
-    const res = runQuery(code);
-    setPlaygroundResult(res);
-  }, [runQuery]);
+    if (!code || !code.trim() || isExecuting) return;
+    setIsExecuting(true);
+    try {
+      const res = await runQuery(code);
+      setPlaygroundResult(res);
+    } finally {
+      setIsExecuting(false);
+    }
+  }, [runQuery, isExecuting]);
 
   const handleResetEditor = useCallback(() => {
     const code = getCleanStarterTemplate(activeExercise);
@@ -214,6 +225,7 @@ export function WorkspaceView() {
                 }}
                 onExecute={handleExecutePlayground}
                 onReset={handleResetPlayground}
+                isExecuting={isExecuting}
               />
               <ResultsTable queryResult={playgroundResult} />
             </div>
@@ -273,6 +285,7 @@ export function WorkspaceView() {
                     }}
                     onExecute={handleExecuteSql}
                     onReset={handleResetEditor}
+                    isExecuting={isExecuting}
                   />
                   <ResultsTable queryResult={queryResult} />
                 </div>
