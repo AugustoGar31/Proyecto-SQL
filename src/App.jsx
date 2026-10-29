@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 import { Navbar } from './components/layout/Navbar.jsx';
 import { SplashScreen } from './components/common/SplashScreen.jsx';
 import { HomeOnboardingModal } from './components/home/HomeOnboardingModal.jsx';
@@ -71,6 +72,7 @@ export function App() {
       <DbEngineProvider>
         <ViewProvider>
           <MainLayout />
+          <Analytics />
         </ViewProvider>
       </DbEngineProvider>
     </ProgressProvider>
