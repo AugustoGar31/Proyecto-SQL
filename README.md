@@ -1,56 +1,29 @@
-# 🚀 SQL Master - Plataforma Interactiva de Aprendizaje SQL (Engineering Edition)
+# ⚡ NexoSQL — QueryMaster Academy
 
-> **Aprende SQL como un Verdadero Ingeniero de Producción.**  
-> Una experiencia educativa moderna, modular y dinámica diseñada para dominar desde consultas relacionales básicas hasta lógica procedural avanzada, triggers, índices B-Tree y transacciones ACID.
+> **Aprende y practica SQL ejecutando consultas reales en tu navegador con 0 ms de latencia.**  
+> Sin servidores, sin instalar bases de datos y 100% gratis.
 
----
-
-## 🌟 Características Principales de la Nueva Versión
-
-- **🎓 10 Módulos de Aprendizaje Estructurado**: Currículum ampliado que abarca desde DQL Básico, Agregaciones (`GROUP BY`/`HAVING`), `JOINs`, Subconsultas y CTEs (`WITH`), Funciones de Ventana (`OVER()`, `PARTITION BY`), Operaciones DML (`INSERT`/`UPDATE`/`DELETE`), Definición de Esquemas DDL, Índices B-Tree, Triggers y Transacciones ACID.
-- **🧠 Mapa Mental Dinámico e Interactivo**: Visualizador jerárquico programático en **React + SVG** (sin fotos estáticas) para navegar visualmente por las ramas de SQL (DQL, DML, DDL, TCL, DCL, Procedural) con filtros y acceso directo a lecciones.
-- **💻 Taller SQL Interactivo (Playground)**: Editor de código con atajos de teclado (`Ctrl + Enter`), tabla de salida tabular con medición de latencia en milisegundos y botón de reset.
-- **⚡ Inspector "Bajo el Capó" (Execution Plan)**: Muestra la estrategia de acceso al almacenamiento estimada (*Abstract Syntax Tree, Index Scan vs Full Table Scan*) tras cada consulta.
-- **🏋️ Catálogo de Katas y Desafíos (Estilo LeetCode / SQLZoo)**: Sistema de ejercicios prácticos con validación automática de matrices de datos y pistas escalonadas.
-- **📊 Explorador de Arquitectura y ERD**: Visualizador relacional de tablas, tipos de datos y claves primarias/foráneas de esquemas reales (*Universidad, Tienda Online E-Commerce, Sistema Bancario*).
-- **⚡ Motor WebAssembly SQLite (100% In-Browser)**: Ejecuta sentencias SQL reales directamente en tu navegador gracias a `sql.js` (SQLite compilado a WebAssembly). ¡Sin servidores y 100% privado!
-- **🎨 Sistema de Diseño Neón Glassmorphic**: Interfaz moderna en modo oscuro (*Dark Slate, Cyan Neón, Indigo y Emerald*), tipografía `Inter` + `JetBrains Mono` y micro-animaciones.
+🌐 **¡Pruébala ahora en vivo! 👉 [https://nexosql.vercel.app/](https://nexosql.vercel.app/)**
 
 ---
 
-## 🏛️ Estructura del Proyecto (Arquitectura Modular)
+## 🎯 ¿De qué trata NexoSQL?
 
-```
-src/
-├── components/
-│   ├── common/         # Navbar, Footer, Badges y ErrorBoundary
-│   ├── navigation/     # Selector de Espacios / Router de Vistas
-│   ├── theory/         # Espacio 1: Teoría & Plan de Estudio
-│   ├── playground/     # Espacio 2: Taller SQL Interactivo
-│   ├── mindmap/        # Espacio 3: Mapa Mental Dinámico (SVG)
-│   ├── exercises/      # Espacio 4: Catálogo de Desafíos / Katas
-│   └── schema/         # Espacio 5: Explorador de Esquemas (ERD)
-├── context/            # Estado global (ViewContext, ProgressContext, DbEngineContext)
-├── data/               # Curriculum ampliado (10 Módulos) y Esquemas de BD
-├── services/           # Servicios aislados (SqlEngineService, ExerciseValidatorService, StorageService)
-└── styles/             # Sistema de diseño (theme.css, glassmorphism.css, main.css, mindmap.css)
-```
+**NexoSQL** es una academia interactiva pensada para que estudiantes y desarrolladores dominen bases de datos relacionales y SQL con un enfoque práctico de ingeniería real. 
+
+En lugar de leer teoría estática, escribes y ejecutas código SQL real directamente en el navegador gracias a un motor **SQLite compilado en WebAssembly (`sql.js`)** corriendo en un Web Worker dedicado.
+
+### ✨ Lo que vas a encontrar adentro:
+- 💻 **Taller SQL & Playground Libre:** Editor interactivo con validación en tiempo real, medición de latencia y planes de ejecución (*EXPLAIN QUERY PLAN*).
+- 🏋️ **Catálogo de Katas & Desafíos:** Ejercicios prácticos por nivel sobre múltiples esquemas reales (*Universidad, E-Commerce, Finanzas, Salud, Streaming*).
+- 🧠 **Mapa Mental Interactivo:** Navegación visual por toda la taxonomía SQL (*DQL, DML, DDL, TCL y Optimización*).
+- 📊 **Explorador de Esquemas (ERD):** Diagramas Entidad-Relación interactivos para entender claves primarias (`PK`), foráneas (`FK`) y relaciones antes de consultar.
+- 🏅 **Rangos, Credenciales y Respaldo Local:** Sube de rango (*SQL Novice* → *Database Guru*), descarga tu credencial en PNG para compartir en LinkedIn y exporta tu progreso firmado (`.nexosql`) sin depender de cuentas ni backends.
 
 ---
 
-## 🛠️ Ejecución Local
+## 🛠️ Stack Tecnológico
 
-1. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
-
-2. **Iniciar servidor de desarrollo (Localhost):**
-   ```bash
-   npm run dev
-   ```
-
-3. **Compilar para producción:**
-   ```bash
-   npm run build
-   ```
+- **Frontend:** React 18 + Vite + Framer Motion + CodeMirror 6
+- **Motor SQL In-Browser:** `sql.js` (SQLite3 en WebAssembly dentro de Web Worker)
+- **Persistencia & PWA:** `localStorage` con respaldos firmados (`SHA-256`) + Service Worker offline-ready
