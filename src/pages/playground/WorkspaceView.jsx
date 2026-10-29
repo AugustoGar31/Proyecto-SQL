@@ -15,7 +15,8 @@ import { useProgress } from '../../context/ProgressContext.jsx';
 import { useDbEngine } from '../../context/DbEngineContext.jsx';
 import { getCleanStarterTemplate } from '../../data/simpleExplanations.js';
 import { Button } from '../../components/common/Button.jsx';
-import { Terminal, Database, Rocket, BookOpen } from 'lucide-react';
+import { Terminal, Database, Rocket, BookOpen, MessageSquarePlus } from 'lucide-react';
+import { reportContextualFeedback } from '../../services/telemetryService.js';
 
 const DEFAULT_PLAYGROUND_SQL = `-- 🚀 Entorno Playground Libre SQL
 -- Escribe y ejecuta cualquier consulta SQL sin restricciones de lecciones
@@ -42,6 +43,34 @@ export function WorkspaceView() {
   const playgroundSqlRef = React.useRef(DEFAULT_PLAYGROUND_SQL);
   const [playgroundResult, setPlaygroundResult] = useState(null);
   const [playgroundTab, setPlaygroundTab] = useState('editor'); // 'editor' | 'internals'
+  const [feedbackNotice, setFeedbackNotice] = useState('');
+
+  const handleContextualReport = useCallback(async () => {
+    const activeSql = isPlaygroundMode ? playgroundSqlRef.current : editorSqlRef.current;
+    const evalMsg = isPlaygroundMode
+      ? playgroundResult?.error || ''
+      : evaluation?.message || queryResult?.error || '';
+
+    const { copied } = await reportContextualFeedback({
+      exerciseId: isPlaygroundMode ? 'playground-libre' : (activeExercise?.id || currentLesson?.id || 'sin-id'),
+      exerciseTitle: isPlaygroundMode
+        ? 'Playground Interactivo Libre'
+        : (activeExercise?.title || currentLesson?.title || 'Taller Práctico SQL'),
+      schemaId: isPlaygroundMode
+        ? 'universidad'
+        : (activeExercise?.schemaId || activeExercise?.schema || currentLesson?.schemaId || currentSchemaId || 'universidad'),
+      sqlQuery: activeSql,
+      evaluationMessage: evalMsg,
+      source: isPlaygroundMode ? 'Taller SQL (Playground Libre)' : 'Taller SQL (Modo Kata/Lección)'
+    });
+
+    setFeedbackNotice(
+      copied
+        ? '📋 Contexto SQL y consulta copiados al portapapeles'
+        : '🔗 Abriendo canal de reporte técnico...'
+    );
+    setTimeout(() => setFeedbackNotice(''), 4000);
+  }, [isPlaygroundMode, activeExercise, currentLesson, currentSchemaId, evaluation, queryResult, playgroundResult]);
 
   useEffect(() => {
     if (activeExercise) {
@@ -168,8 +197,37 @@ export function WorkspaceView() {
           >
             {showErd ? 'Ocultar ERD' : 'Ver Diagrama ERD'}
           </Button>
+
+          <Button
+            variant="ghost"
+            size="md"
+            onClick={handleContextualReport}
+            icon={MessageSquarePlus}
+            title="Reportar un problema o sugerencia adjuntando el ID de la Kata y tu consulta SQL"
+            style={{ borderColor: 'rgba(245, 158, 11, 0.35)', color: 'var(--accent-amber)' }}
+          >
+            Reportar Problema
+          </Button>
         </div>
       </div>
+
+      {feedbackNotice && (
+        <div
+          role="status"
+          style={{
+            marginBottom: '1rem',
+            padding: '0.55rem 0.9rem',
+            borderRadius: 'var(--radius-sm)',
+            background: 'rgba(6, 182, 212, 0.12)',
+            border: '1px solid rgba(6, 182, 212, 0.35)',
+            color: 'var(--accent-cyan)',
+            fontSize: '0.82rem',
+            fontWeight: 500
+          }}
+        >
+          {feedbackNotice}
+        </div>
+      )}
 
       {/* Visor ERD Colapsable con Esquema Fijo Contextual */}
       {showErd && (

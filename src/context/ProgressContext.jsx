@@ -209,6 +209,16 @@ export const ProgressProvider = ({ children }) => {
     setActiveLessonId('les-m0-relational');
   }, []);
 
+  const restoreProgress = useCallback((validatedProgress) => {
+    if (!validatedProgress || typeof validatedProgress !== 'object') return;
+    storageService.saveProgress(validatedProgress);
+    const reloaded = storageService.loadProgress();
+    setProgress(reloaded);
+    if (reloaded.lastActiveLessonId) {
+      setActiveLessonId(reloaded.lastActiveLessonId);
+    }
+  }, []);
+
   const getLessonStatus = useCallback((lessonId, moduleId) => {
     if (!isModuleUnlocked(moduleId)) return 'locked';
     if (progress.completedLessons.includes(lessonId)) return 'completed';
@@ -297,6 +307,7 @@ export const ProgressProvider = ({ children }) => {
     progress,
     completeExercise,
     resetAllProgress,
+    restoreProgress,
     unlockAllModules,
     isModuleUnlocked,
     isPlaybookUnlocked,
@@ -315,6 +326,7 @@ export const ProgressProvider = ({ children }) => {
     progress,
     completeExercise,
     resetAllProgress,
+    restoreProgress,
     unlockAllModules,
     isModuleUnlocked,
     isPlaybookUnlocked,

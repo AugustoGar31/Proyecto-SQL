@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Archivos estáticos e indexación completa para NexoSQL SPA
+Sitemap: https://nexosql.vercel.app/sitemap.xml
+

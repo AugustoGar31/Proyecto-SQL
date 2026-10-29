@@ -4,7 +4,7 @@
  * y estética Glassmorphism de alta fidelidad.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -16,17 +16,78 @@ import {
   Database,
   Trophy,
   Rocket,
-  ArrowRight
+  ArrowRight,
+  Award,
+  Download,
+  Upload
 } from 'lucide-react';
 import { useView } from '../../context/ViewContext.jsx';
 import { useUserProgress } from '../../context/ProgressContext.jsx';
 import { Button } from '../common/Button.jsx';
+import { getStudentRank, downloadCredentialCard } from '../../services/credentialGeneratorService.js';
+import { exportProgressFile, importProgressFromFile } from '../../services/progressBackupService.js';
 
 export function HomeOnboardingModal() {
   const { isHomeModalOpen, closeHomeModal, setActiveView } = useView();
-  const { progressPercentage, progress, completedCount, totalLessons, totalKatas } = useUserProgress();
+  const {
+    progressPercentage,
+    progress,
+    completedCount,
+    totalLessons,
+    totalKatas,
+    completedKatasCount,
+    restoreProgress
+  } = useUserProgress();
 
   const [activeSlide, setActiveSlide] = useState(0);
+  const [backupFeedback, setBackupFeedback] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const currentRank = getStudentRank(progressPercentage);
+  const xpPoints = progress.completedExercises ? progress.completedExercises.length * 100 : 0;
+
+  const showBackupFeedback = (text, isError = false) => {
+    setBackupFeedback({ text, isError });
+    setTimeout(() => setBackupFeedback(null), 4500);
+  };
+
+  const handleDownloadCredential = async () => {
+    try {
+      await downloadCredentialCard({
+        progressPercentage,
+        completedKatasCount,
+        totalKatas,
+        completedCount,
+        totalLessons,
+        xpPoints
+      });
+      showBackupFeedback('🏅 Credencial PNG descargada con éxito');
+    } catch {
+      showBackupFeedback('No se pudo generar la credencial', true);
+    }
+  };
+
+  const handleExportProgress = async () => {
+    try {
+      await exportProgressFile(progress);
+      showBackupFeedback('💾 Archivo .nexosql exportado correctamente');
+    } catch {
+      showBackupFeedback('Error al exportar el respaldo', true);
+    }
+  };
+
+  const handleImportProgress = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const { progress: verified } = await importProgressFromFile(file);
+      restoreProgress(verified);
+      showBackupFeedback('✅ Firma verificada y progreso restaurado');
+    } catch (err) {
+      showBackupFeedback(err.message || 'Archivo inválido o alterado', true);
+    }
+  };
 
   // Cerrar modal al presionar la tecla Escape
   useEffect(() => {
@@ -424,6 +485,119 @@ export function HomeOnboardingModal() {
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}> / {totalKatas || 0}</span>
                     </div>
                   </div>
+
+                  {/* Rango Actual & Credencial Compartible */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.6rem',
+                      background: 'rgba(15, 23, 42, 0.65)',
+                      padding: '0.6rem 0.8rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: `1px solid ${currentRank.color}45`
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>Rango Actual</span>
+                      <strong style={{ fontSize: '0.86rem', color: currentRank.color }}>
+                        {currentRank.badge} {currentRank.title}
+                      </strong>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDownloadCredential}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        background: 'rgba(6, 182, 212, 0.14)',
+                        color: 'var(--accent-cyan)',
+                        border: '1px solid rgba(6, 182, 212, 0.35)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '0.4rem 0.65rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Award size={14} />
+                      <span>Descargar Credencial</span>
+                    </button>
+                  </div>
+
+                  {/* Controles de Respaldo Protegido (.nexosql) */}
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={handleExportProgress}
+                      style={{
+                        flex: 1,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.35rem',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '0.45rem 0.5rem',
+                        fontSize: '0.74rem',
+                        fontWeight: 500,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Download size={13} />
+                      <span>Exportar Respaldo</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        flex: 1,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.35rem',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '0.45rem 0.5rem',
+                        fontSize: '0.74rem',
+                        fontWeight: 500,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Upload size={13} />
+                      <span>Importar Progreso</span>
+                    </button>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".nexosql"
+                      onChange={handleImportProgress}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+
+                  {backupFeedback && (
+                    <div
+                      style={{
+                        fontSize: '0.74rem',
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: backupFeedback.isError ? 'rgba(244, 63, 94, 0.14)' : 'rgba(16, 185, 129, 0.14)',
+                        color: backupFeedback.isError ? 'var(--accent-rose)' : 'var(--accent-emerald)',
+                        border: `1px solid ${backupFeedback.isError ? 'rgba(244, 63, 94, 0.35)' : 'rgba(16, 185, 129, 0.35)'}`
+                      }}
+                    >
+                      {backupFeedback.text}
+                    </div>
+                  )}
                 </div>
 
                 {/* BENTO CARD 3: Atajo Rápido al Taller / Playground (Secondary CTA) */}
